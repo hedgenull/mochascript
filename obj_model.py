@@ -1,5 +1,3 @@
-from lib2to3.pgen2.token import OP
-
 from common import *
 
 OP_TO_FUNC_MAP = {

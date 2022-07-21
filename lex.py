@@ -23,6 +23,7 @@ class Lexer(sly.Lexer):
         IF,
         ELSE,
         ARROW,
+        FN,
         COMMA,
     }
 
@@ -52,3 +53,4 @@ class Lexer(sly.Lexer):
     # Special keywords
     IDENT["if"] = IF
     IDENT["else"] = ELSE
+    IDENT["fn"] = FN

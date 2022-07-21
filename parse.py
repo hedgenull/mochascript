@@ -19,7 +19,7 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
-    @_("LPAREN IDENT RPAREN ARROW expr")
+    @_("FN LPAREN IDENT RPAREN ARROW expr")
     def expr(self, p):
         """Function definition"""
 

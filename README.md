@@ -10,5 +10,5 @@ Echo* (pronounced "Echo-star") is a simple, interpreted programming language. Th
 
 `y = print x`: Prints x and assigns it to y.
 
-I decided on everything-an-expression because 1. it's cool, interesting, and unusual, and 2. it's harder in some ways but easier in others.
+I decided on the everything-is-an-expression rule because 1. it's cool, interesting, and unusual, and 2. it's harder in some ways but easier in others.
 When I add them, everything from functions to loops to if-statements will be expressions, meaning they have a return value. Echo* will most likely be a functional programming language.

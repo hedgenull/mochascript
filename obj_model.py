@@ -13,6 +13,9 @@ class BaseObject:
     def repr(self):
         return str(self.value)
 
+    def type(self):
+        return self.__class__.__name__
+
 
 class Number(BaseObject):
     def __init__(self, value):

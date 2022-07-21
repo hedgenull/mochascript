@@ -227,3 +227,13 @@ class Print(BuiltInFunction):
     def visit(self):
         print(self.result.repr())
         return self.expr
+
+
+class Input(BuiltInFunction):
+    """Input function."""
+
+    def __init__(self, expr):
+        self.result = expr.visit()
+
+    def visit(self):
+        return String(input(self.result.repr()))

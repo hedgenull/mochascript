@@ -15,7 +15,7 @@ class Parser(sly.Parser):
         ("left", EQEQ, NTEQ, LT, GT, LTEQ, GTEQ),
     )
 
-    env = {"print": Print, "true": Boolean(True), "false": Boolean(False)}
+    env = {"print": Print, "input": Input, "true": Boolean(True), "false": Boolean(False)}
 
     # Grammar rules and actions
 

@@ -11,14 +11,21 @@ class Parser(sly.Parser):
 
     precedence = (
         ("left", PLUS, MINUS),
-        ("left", MUL, DIV),
+        ("left", MUL, DIV, MOD),
     )
+
+    env = {}
 
     # Grammar rules and actions
 
+    @_("IDENT EQ expr")
+    def expr(self, p):
+        self.env[p.IDENT] = p.expr.visit()
+        return p.expr
+
     @_("SHOW expr")
     def expr(self, p):
-        print(p.expr.visit())
+        print(p.expr.visit().repr())
         return p.expr
 
     @_("expr PLUS expr")
@@ -54,6 +61,13 @@ class Parser(sly.Parser):
     @_("STRING")
     def expr(self, p):
         return String(p.STRING)
+
+    @_("IDENT")
+    def expr(self, p):
+        if val := self.env.get(p.IDENT):
+            return val
+        else:
+            abort(f"Undefined variable {p.IDENT}")
 
     @_("LPAREN expr RPAREN")
     def expr(self, p):

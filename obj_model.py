@@ -10,7 +10,8 @@ OP_TO_FUNC_MAP = {
 
 
 class BaseObject:
-    pass
+    def repr(self):
+        return str(self.value)
 
 
 class Number(BaseObject):
@@ -19,72 +20,74 @@ class Number(BaseObject):
 
     def add(self, other):
         if isinstance(other, Number):
-            return self.value + other.value
+            return Number(self.value + other.value)
         elif isinstance(other, BinOp):
-            return self.value + other.visit()
+            return self.add(other.visit())
         else:
-            abort(f"Invalid types for operation: Number and {type(other)}")
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def sub(self, other):
         if isinstance(other, Number):
-            return self.value - other.value
+            return Number(self.value - other.value)
         elif isinstance(other, BinOp):
-            return self.value - other.visit()
+            return self.sub(other.visit())
         else:
-            abort(f"Invalid types for operation: Number and {type(other)}")
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def mul(self, other):
         if isinstance(other, Number):
-            return self.value * other.value
+            return Number(self.value * other.value)
         elif isinstance(other, BinOp):
-            return self.value * other.visit()
+            return self.mul(other.visit())
         else:
-            abort(f"Invalid types for operation: Number and {type(other)}")
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def div(self, other):
         if isinstance(other, Number):
-            return self.value / other.value
+            return Number(self.value / other.value)
         elif isinstance(other, BinOp):
-            return self.value / other.visit()
+            return self.div(other.visit())
         else:
-            abort(f"Invalid types for operation: Number and {type(other)}")
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def mod(self, other):
         if isinstance(other, Number):
-            return self.value % other.value
+            return Number(self.value % other.value)
         elif isinstance(other, BinOp):
-            return self.value % other.visit()
+            return self.mod(other.visit())
         else:
-            abort(f"Invalid types for operation: Number and {type(other)}")
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def visit(self):
-        return self.value
+        return self
 
 
 class String(BaseObject):
     def __init__(self, value):
-        self.value = value[1:-1]  # Strip leading and trailing quotes
+        self.value = str(value).strip("\"'")
 
     def add(self, other):
-        if isinstance(other, String):
-            return self.value + other.value
+        if isinstance(other, BinOp):
+            return self.add(other.visit())
         else:
-            abort(f"Invalid types for operation: String and {type(other)}")
+            return String(self.value + other.repr())
 
     def mul(self, other):
         if isinstance(other, Number):
-            return self.value * other.value
+            return String(self.value * other.value)
+        elif isinstance(other, BinOp):
+            return self.mul(other.visit())
         else:
-            abort(f"Invalid types for operation: String and {type(other)}")
+            abort(f"Invalid types for operation: String and {type(other).__name__}")
 
     def mod(self, other):
-        if isinstance(other, String):
-            return self.value.replace("{}", other.value)
+        if isinstance(other, BinOp):
+            return self.mod(other.visit())
         else:
-            abort(f"Invalid types for operation: String and {type(other)}")
+            return String(self.value.replace("{}", other.repr()))
 
     def visit(self):
-        return self.value
+        return self
 
 
 class BinOp(BaseObject):
@@ -92,9 +95,6 @@ class BinOp(BaseObject):
         self.op = op
         self.right = right
         self.left = left
-
-    def visit(self):
-        return eval(f"self.right.{OP_TO_FUNC_MAP[self.op]}(self.left)")
 
     def add(self, other):
         return self.visit().add(other)
@@ -110,3 +110,9 @@ class BinOp(BaseObject):
 
     def mod(self, other):
         return self.visit().mod(other)
+
+    def visit(self):
+        return eval(f"self.right.{OP_TO_FUNC_MAP[self.op]}(self.left)")
+
+    def repr(self):
+        return self.visit().repr()

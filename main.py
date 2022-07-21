@@ -15,4 +15,4 @@ if __name__ == "__main__":
         ast = parser.parse(tokens)
         result = ast.visit()
 
-        print(result)
+        print(result.repr())

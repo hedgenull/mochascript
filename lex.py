@@ -5,6 +5,7 @@ class Lexer(sly.Lexer):
     tokens = {NUMBER, IDENT, EQ, EQEQ, NTEQ, LT, GT, LTEQ, GTEQ, STRING, PLUS, MINUS, MUL, DIV, MOD, LPAREN, RPAREN, IF, ELSE}
 
     ignore = " \t"
+    ignore_comment = r"#.*"
 
     NUMBER = r"\d+"
     IDENT = r"[a-zA-Z_][a-zA-Z0-9_]*"

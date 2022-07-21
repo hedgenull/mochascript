@@ -6,7 +6,7 @@ if __name__ == "__main__":
     parser = Parser()
 
     while True:
-        source = input(">>> ").strip()
+        source = input(">>> ").strip().split("#")[0]
         if source == "exit":
             break
         elif source == "":

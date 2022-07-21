@@ -1,0 +1,13 @@
+I started this late. So, at the time of writing (Jul. 21, 2022, at 6:37 PM), I already have:
+- numbers
+- strings
+- math
+- booleans
+- if-expressions
+- rudimentary string formatting
+
+I plan to add functions next. Functions will be expressed in this form:
+`x = (a, b) => (a + b)`
+
+They'll be called like this:
+`x(1, 2) # evaluates to 3`

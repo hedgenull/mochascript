@@ -2,7 +2,7 @@ import sly
 
 
 class Lexer(sly.Lexer):
-    tokens = {NUMBER, IDENT, EQ, STRING, PLUS, MINUS, MUL, DIV, MOD, LPAREN, RPAREN, PRINT}
+    tokens = {NUMBER, IDENT, EQ, EQEQ, NTEQ, LT, GT, LTEQ, GTEQ, STRING, PLUS, MINUS, MUL, DIV, MOD, LPAREN, RPAREN, IF, ELSE}
 
     ignore = " \t"
 
@@ -11,6 +11,12 @@ class Lexer(sly.Lexer):
     STRING = r"(\"[^\"]*\"|\'[^\']*\')"
     LPAREN = r"\("
     RPAREN = r"\)"
+    EQEQ = r"=="
+    NTEQ = r"!="
+    LTEQ = r"<="
+    GTEQ = r">="
+    LT = r"<"
+    GT = r">"
     EQ = r"="
     PLUS = r"\+"
     MINUS = r"\-"
@@ -19,4 +25,5 @@ class Lexer(sly.Lexer):
     MOD = r"\%"
 
     # Special keywords
-    IDENT["print"] = PRINT
+    IDENT["if"] = IF
+    IDENT["else"] = ELSE

@@ -1,4 +1,4 @@
-from ast import Not
+from lib2to3.pgen2.token import OP
 
 from common import *
 
@@ -8,11 +8,31 @@ OP_TO_FUNC_MAP = {
     "*": "mul",
     "/": "div",
     "%": "mod",
+    "==": "eq",
+    "!=": "ne",
+    "<": "lt",
+    ">": "gt",
+    "<=": "le",
+    ">=": "ge",
 }
 
 
 class BaseObject:
     """Base class for all objects in the language."""
+
+    def __getattr__(self, name):
+        """Some fun metaprogramming techniques for less code!"""
+        if name in OP_TO_FUNC_MAP.values():
+            return lambda other: eval(f"self.visit().{name}(other)")
+
+    def eq(self, other):
+        return Boolean(self.visit() == other.visit())
+
+    def ne(self, other):
+        return Boolean(self.visit() != other.visit())
+
+    def visit(self):
+        return self
 
     def repr(self):
         return str(self.value)
@@ -67,11 +87,66 @@ class Number(BaseObject):
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
-    def visit(self):
-        return self
+    def eq(self, other):
+        if isinstance(other, Number):
+            return Boolean(self.value == other.value)
+        elif isinstance(other, BinOp):
+            return self.eq(other.visit())
+        else:
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+
+    def ne(self, other):
+        if isinstance(other, Number):
+            return Boolean(self.value != other.value)
+        elif isinstance(other, BinOp):
+            return self.ne(other.visit())
+        else:
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+
+    def lt(self, other):
+        if isinstance(other, Number):
+            return Boolean(self.value < other.value)
+        elif isinstance(other, BinOp):
+            return self.lt(other.visit())
+        else:
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+
+    def gt(self, other):
+        if isinstance(other, Number):
+            return Boolean(self.value > other.value)
+        elif isinstance(other, BinOp):
+            return self.gt(other.visit())
+        else:
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+
+    def le(self, other):
+        if isinstance(other, Number):
+            return Boolean(self.value <= other.value)
+        elif isinstance(other, BinOp):
+            return self.le(other.visit())
+        else:
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+
+    def ge(self, other):
+        if isinstance(other, Number):
+            return Boolean(self.value >= other.value)
+        elif isinstance(other, BinOp):
+            return self.ge(other.visit())
+        else:
+            abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def repr(self):
         return str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value)
+
+
+class Boolean(BaseObject):
+    """Boolean class for the language."""
+
+    def __init__(self, value=True):
+        self.value = value
+
+    def repr(self):
+        return str(self.value).lower()
 
 
 class String(BaseObject):
@@ -100,9 +175,6 @@ class String(BaseObject):
         else:
             return String(self.value.replace("{}", other.repr()))
 
-    def visit(self):
-        return self
-
 
 class BinOp(BaseObject):
     """Binary operation class for the language."""
@@ -112,21 +184,6 @@ class BinOp(BaseObject):
         self.right = right
         self.left = left
 
-    def add(self, other):
-        return self.visit().add(other)
-
-    def sub(self, other):
-        return self.visit().sub(other)
-
-    def mul(self, other):
-        return self.visit().mul(other)
-
-    def div(self, other):
-        return self.visit().div(other)
-
-    def mod(self, other):
-        return self.visit().mod(other)
-
     def visit(self):
         return eval(f"self.right.{OP_TO_FUNC_MAP[self.op]}(self.left)")
 
@@ -134,8 +191,20 @@ class BinOp(BaseObject):
         return self.visit().repr()
 
 
-class Function(BinOp):
-    """Base function class for the language. Inherits from BinOp because of mathematical operations, which work the same as BinOp's do."""
+class IfNode(BaseObject):
+    """If-expression class for the language."""
+
+    def __init__(self, condition, true_block, false_block):
+        self.condition = condition
+        self.true_block = true_block
+        self.false_block = false_block
+
+    def visit(self):
+        return self.true_block.visit() if self.condition.visit().value == True else self.false_block.visit()
+
+
+class Function(BaseObject):
+    """Base function class for the language."""
 
     def repr(self):
         return f"<function {self.__class__.__name__}>"
@@ -148,7 +217,7 @@ class BuiltInFunction(Function):
         return f"<built-in function {self.__class__.__name__}>"
 
 
-class Print(Function):
+class Print(BuiltInFunction):
     """Print function."""
 
     def __init__(self, expr):

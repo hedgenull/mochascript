@@ -12,20 +12,28 @@ class Parser(sly.Parser):
     precedence = (
         ("left", PLUS, MINUS),
         ("left", MUL, DIV, MOD),
+        ("left", EQEQ, NTEQ, LT, GT, LTEQ, GTEQ),
     )
 
-    env = {}
+    env = {"print": Print, "true": Boolean(True), "false": Boolean(False)}
 
     # Grammar rules and actions
+
+    @_("IDENT LPAREN expr RPAREN")
+    def expr(self, p):
+        if val := self.env.get(p.IDENT):
+            return val(p.expr)
+        else:
+            abort(f"Undefined function {p.IDENT}")
 
     @_("IDENT EQ expr")
     def expr(self, p):
         self.env[p.IDENT] = p.expr.visit()
         return p.expr
 
-    @_("PRINT expr")
+    @_("LPAREN expr RPAREN IF expr ELSE LPAREN expr RPAREN")
     def expr(self, p):
-        return Print(p.expr)
+        return IfNode(p.expr1, p.expr0, p.expr2)
 
     @_("expr PLUS expr")
     def expr(self, p):
@@ -46,6 +54,30 @@ class Parser(sly.Parser):
     @_("expr MOD expr")
     def expr(self, p):
         return BinOp("%", p.expr0, p.expr1)
+
+    @_("expr EQEQ expr")
+    def expr(self, p):
+        return BinOp("==", p.expr0, p.expr1)
+
+    @_("expr NTEQ expr")
+    def expr(self, p):
+        return BinOp("!=", p.expr0, p.expr1)
+
+    @_("expr LT expr")
+    def expr(self, p):
+        return BinOp("<", p.expr0, p.expr1)
+
+    @_("expr GT expr")
+    def expr(self, p):
+        return BinOp(">", p.expr0, p.expr1)
+
+    @_("expr LTEQ expr")
+    def expr(self, p):
+        return BinOp("<=", p.expr0, p.expr1)
+
+    @_("expr GTEQ expr")
+    def expr(self, p):
+        return BinOp(">=", p.expr0, p.expr1)
 
     @_("NUMBER")
     def expr(self, p):

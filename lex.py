@@ -2,7 +2,29 @@ import sly
 
 
 class Lexer(sly.Lexer):
-    tokens = {NUMBER, IDENT, EQ, EQEQ, NTEQ, LT, GT, LTEQ, GTEQ, STRING, PLUS, MINUS, MUL, DIV, MOD, LPAREN, RPAREN, IF, ELSE}
+    tokens = {
+        NUMBER,
+        IDENT,
+        EQ,
+        EQEQ,
+        NTEQ,
+        LT,
+        GT,
+        LTEQ,
+        GTEQ,
+        STRING,
+        PLUS,
+        MINUS,
+        MUL,
+        DIV,
+        MOD,
+        LPAREN,
+        RPAREN,
+        IF,
+        ELSE,
+        ARROW,
+        COMMA,
+    }
 
     ignore = " \t"
     ignore_comment = r"#.*"
@@ -12,6 +34,8 @@ class Lexer(sly.Lexer):
     STRING = r"(\"[^\"]*\"|\'[^\']*\')"
     LPAREN = r"\("
     RPAREN = r"\)"
+    ARROW = r"=>"
+    COMMA = r","
     EQEQ = r"=="
     NTEQ = r"!="
     LTEQ = r"<="

@@ -200,7 +200,11 @@ class IfNode(BaseObject):
         self.false_block = false_block
 
     def visit(self):
-        return self.true_block.visit() if self.condition.visit().value == True else self.false_block.visit()
+        return (
+            self.true_block.visit()
+            if self.condition.visit().value == True
+            else self.false_block.visit()
+        )
 
 
 class Function(BaseObject):

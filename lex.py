@@ -2,7 +2,7 @@ import sly
 
 
 class Lexer(sly.Lexer):
-    tokens = {NUMBER, IDENT, EQ, STRING, PLUS, MINUS, MUL, DIV, MOD, LPAREN, RPAREN, SHOW}
+    tokens = {NUMBER, IDENT, EQ, STRING, PLUS, MINUS, MUL, DIV, MOD, LPAREN, RPAREN, PRINT}
 
     ignore = " \t"
 
@@ -19,4 +19,4 @@ class Lexer(sly.Lexer):
     MOD = r"\%"
 
     # Special keywords
-    IDENT["show"] = SHOW
+    IDENT["print"] = PRINT

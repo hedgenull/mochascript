@@ -1,3 +1,5 @@
+from ast import Not
+
 from common import *
 
 OP_TO_FUNC_MAP = {
@@ -10,6 +12,8 @@ OP_TO_FUNC_MAP = {
 
 
 class BaseObject:
+    """Base class for all objects in the language."""
+
     def repr(self):
         return str(self.value)
 
@@ -18,8 +22,10 @@ class BaseObject:
 
 
 class Number(BaseObject):
+    """Number class for the language."""
+
     def __init__(self, value):
-        self.value = int(value)
+        self.value = float(value)
 
     def add(self, other):
         if isinstance(other, Number):
@@ -64,8 +70,13 @@ class Number(BaseObject):
     def visit(self):
         return self
 
+    def repr(self):
+        return str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value)
+
 
 class String(BaseObject):
+    """String class for the language."""
+
     def __init__(self, value):
         self.value = str(value).strip("\"'")
 
@@ -94,6 +105,8 @@ class String(BaseObject):
 
 
 class BinOp(BaseObject):
+    """Binary operation class for the language."""
+
     def __init__(self, op, right, left):
         self.op = op
         self.right = right
@@ -119,3 +132,29 @@ class BinOp(BaseObject):
 
     def repr(self):
         return self.visit().repr()
+
+
+class Function(BinOp):
+    """Base function class for the language. Inherits from BinOp because of mathematical operations, which work the same as BinOp's do."""
+
+    def repr(self):
+        return f"<function {self.__class__.__name__}>"
+
+
+class BuiltInFunction(Function):
+    """Base class for built-in functions."""
+
+    def repr(self):
+        return f"<built-in function {self.__class__.__name__}>"
+
+
+class Print(Function):
+    """Print function."""
+
+    def __init__(self, expr):
+        self.expr = expr
+        self.result = expr.visit()
+
+    def visit(self):
+        print(self.result.repr())
+        return self.expr

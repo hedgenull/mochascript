@@ -23,10 +23,9 @@ class Parser(sly.Parser):
         self.env[p.IDENT] = p.expr.visit()
         return p.expr
 
-    @_("SHOW expr")
+    @_("PRINT expr")
     def expr(self, p):
-        print(p.expr.visit().repr())
-        return p.expr
+        return Print(p.expr)
 
     @_("expr PLUS expr")
     def expr(self, p):

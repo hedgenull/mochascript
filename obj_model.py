@@ -18,10 +18,32 @@ OP_TO_FUNC_MAP = {
 class BaseObject:
     """Base class for all objects in the language."""
 
-    def __getattr__(self, name):
-        """Some fun metaprogramming techniques for less code!"""
-        if name in OP_TO_FUNC_MAP.values():
-            return lambda other: eval(f"self.visit().{name}(other)")
+    def add(self, other):
+        return self.visit().add(other)
+
+    def sub(self, other):
+        return self.visit().sub(other)
+
+    def mul(self, other):
+        return self.visit().mul(other)
+
+    def div(self, other):
+        return self.visit().div(other)
+
+    def mod(self, other):
+        return self.visit().mod(other)
+
+    def lt(self, other):
+        return Boolean(self.visit() < other.visit())
+
+    def gt(self, other):
+        return Boolean(self.visit() > other.visit())
+
+    def le(self, other):
+        return Boolean(self.visit() <= other.visit())
+
+    def ge(self, other):
+        return Boolean(self.visit() >= other.visit())
 
     def eq(self, other):
         return Boolean(self.visit() == other.visit())
@@ -48,7 +70,7 @@ class Number(BaseObject):
     def add(self, other):
         if isinstance(other, Number):
             return Number(self.value + other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.add(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -56,7 +78,7 @@ class Number(BaseObject):
     def sub(self, other):
         if isinstance(other, Number):
             return Number(self.value - other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.sub(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -64,7 +86,7 @@ class Number(BaseObject):
     def mul(self, other):
         if isinstance(other, Number):
             return Number(self.value * other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.mul(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -72,7 +94,7 @@ class Number(BaseObject):
     def div(self, other):
         if isinstance(other, Number):
             return Number(self.value / other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.div(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -80,7 +102,7 @@ class Number(BaseObject):
     def mod(self, other):
         if isinstance(other, Number):
             return Number(self.value % other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.mod(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -88,7 +110,7 @@ class Number(BaseObject):
     def eq(self, other):
         if isinstance(other, Number):
             return Boolean(self.value == other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.eq(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -96,7 +118,7 @@ class Number(BaseObject):
     def ne(self, other):
         if isinstance(other, Number):
             return Boolean(self.value != other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.ne(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -104,7 +126,7 @@ class Number(BaseObject):
     def lt(self, other):
         if isinstance(other, Number):
             return Boolean(self.value < other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.lt(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -112,7 +134,7 @@ class Number(BaseObject):
     def gt(self, other):
         if isinstance(other, Number):
             return Boolean(self.value > other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.gt(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -120,7 +142,7 @@ class Number(BaseObject):
     def le(self, other):
         if isinstance(other, Number):
             return Boolean(self.value <= other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.le(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -128,7 +150,7 @@ class Number(BaseObject):
     def ge(self, other):
         if isinstance(other, Number):
             return Boolean(self.value >= other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.ge(other.visit())
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -150,11 +172,11 @@ class Boolean(BaseObject):
 class String(BaseObject):
     """String class for the language."""
 
-    def __init__(self, value):
+    def __init__(self, value=""):
         self.value = str(value).strip("\"'")
 
     def add(self, other):
-        if isinstance(other, BinOp):
+        if isinstance(other, UnInstantiable):
             return self.add(other.visit())
         else:
             return String(self.value + other.repr())
@@ -162,19 +184,39 @@ class String(BaseObject):
     def mul(self, other):
         if isinstance(other, Number):
             return String(self.value * other.value)
-        elif isinstance(other, BinOp):
+        elif isinstance(other, UnInstantiable):
             return self.mul(other.visit())
         else:
             abort(f"Invalid types for operation: String and {type(other).__name__}")
 
     def mod(self, other):
-        if isinstance(other, BinOp):
+        if isinstance(other, UnInstantiable):
             return self.mod(other.visit())
         else:
             return String(self.value.replace("{}", other.repr()))
 
+    def eq(self, other):
+        if isinstance(other, String):
+            return Boolean(self.value == other.value)
+        elif isinstance(other, UnInstantiable):
+            return self.eq(other.visit())
+        else:
+            abort(f"Invalid types for operation: String and {type(other).__name__}")
 
-class BinOp(BaseObject):
+    def ne(self, other):
+        if isinstance(other, String):
+            return Boolean(self.value != other.value)
+        elif isinstance(other, UnInstantiable):
+            return self.ne(other.visit())
+        else:
+            abort(f"Invalid types for operation: String and {type(other).__name__}")
+
+
+class UnInstantiable(BaseObject):
+    pass
+
+
+class BinOp(UnInstantiable):
     """Binary operation class for the language."""
 
     def __init__(self, op, right, left):
@@ -189,7 +231,7 @@ class BinOp(BaseObject):
         return self.visit().repr()
 
 
-class IfNode(BaseObject):
+class IfNode(UnInstantiable):
     """If-expression class for the language."""
 
     def __init__(self, condition, true_block, false_block):
@@ -205,11 +247,27 @@ class IfNode(BaseObject):
         )
 
 
+class Assignment(UnInstantiable):
+    """Assignment manager for the language."""
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def visit(self):
+        ENV[self.name] = self.value
+        return self.value
+
+
 class Function(BaseObject):
     """Base function class for the language."""
 
     def repr(self):
         return f"<function {self.__class__.__name__}>"
+
+    def __init__(self, args, expr):
+        self.args = args
+        self.expr = expr
 
 
 class BuiltInFunction(Function):
@@ -234,8 +292,11 @@ class Print(BuiltInFunction):
 class Input(BuiltInFunction):
     """Input function."""
 
-    def __init__(self, expr):
+    def __init__(self, expr=String()):
         self.result = expr.visit()
 
     def visit(self):
         return String(input(self.result.repr()))
+
+
+ENV = {"print": Print, "input": Input, "true": Boolean(True), "false": Boolean(False)}

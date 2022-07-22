@@ -15,8 +15,6 @@ class Parser(sly.Parser):
         ("left", EQEQ, NTEQ, LT, GT, LTEQ, GTEQ),
     )
 
-    env = {"print": Print, "input": Input, "true": Boolean(True), "false": Boolean(False)}
-
     # Grammar rules and actions
 
     @_("FN LPAREN IDENT RPAREN ARROW expr")
@@ -25,17 +23,24 @@ class Parser(sly.Parser):
 
     @_("IDENT LPAREN expr RPAREN")
     def expr(self, p):
-        """Function call"""
-        if val := self.env.get(p.IDENT):
+        """Function call, with arguments"""
+        if val := ENV.get(p.IDENT):
             return val(p.expr)
+        else:
+            abort(f"Undefined function {p.IDENT}")
+
+    @_("IDENT LPAREN RPAREN")
+    def expr(self, p):
+        """Function call, without arguments"""
+        if val := ENV.get(p.IDENT):
+            return val()
         else:
             abort(f"Undefined function {p.IDENT}")
 
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
-        self.env[p.IDENT] = p.expr.visit()
-        return p.expr
+        return Assignment(p.IDENT, p.expr.visit())
 
     @_("LPAREN expr RPAREN IF expr ELSE LPAREN expr RPAREN")
     def expr(self, p):
@@ -117,7 +122,7 @@ class Parser(sly.Parser):
     @_("IDENT")
     def expr(self, p):
         """Variable reference"""
-        if val := self.env.get(p.IDENT):
+        if val := ENV.get(p.IDENT):
             return val
         else:
             abort(f"Undefined variable {p.IDENT}")

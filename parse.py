@@ -22,7 +22,7 @@ class Parser(sly.Parser):
         """Assignment expression"""
         return Assignment(p.IDENT, p.expr.visit())
 
-    @_("LPAREN expr RPAREN IF expr ELSE LPAREN expr RPAREN")
+    @_("LPAREN expr IF expr ELSE expr RPAREN")
     def expr(self, p):
         """If-else expression"""
         return IfNode(p.expr1, p.expr0, p.expr2)

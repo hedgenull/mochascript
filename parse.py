@@ -11,43 +11,43 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
-    @_("comp AND expr")
-    def comp(self, p):
-        """And"""
-        return BinOp("&&", p.comp, p.expr)
-
-    @_("comp OR expr")
-    def comp(self, p):
-        """Or"""
-        return BinOp("||", p.comp, p.expr)
-
-    @_("expr")
-    def comp(self, p):
-        """Expression"""
-        return p.expr
-
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
         return Assignment(p.IDENT, p.expr)
 
-    @_("LPAREN expr IF expr ELSE expr RPAREN")
+    @_("LPAREN expr IF comp ELSE expr RPAREN")
     def expr(self, p):
         """If-else expression"""
         return IfNode(p.expr1, p.expr0, p.expr2)
 
-    @_("expr PLUS term")
+    @_("expr PLUS comp")
     def expr(self, p):
         """Addition"""
-        return BinOp("+", p.expr, p.term)
+        return BinOp("+", p.expr, p.comp)
 
-    @_("expr MINUS term")
+    @_("expr MINUS comp")
     def expr(self, p):
         """Subtraction"""
-        return BinOp("-", p.expr, p.term)
+        return BinOp("-", p.expr, p.comp)
+
+    @_("comp")
+    def expr(self, p):
+        """Comparison"""
+        return p.comp
+
+    @_("comp AND term")
+    def comp(self, p):
+        """And"""
+        return BinOp("&&", p.comp, p.term)
+
+    @_("comp OR term")
+    def comp(self, p):
+        """Or"""
+        return BinOp("||", p.comp, p.term)
 
     @_("term")
-    def expr(self, p):
+    def comp(self, p):
         """Term"""
         return p.term
 

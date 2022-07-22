@@ -220,6 +220,8 @@ class Assignment(SpecialExpression):
 
 
 class CallNode(SpecialExpression):
+    """Callable node for the language."""
+
     def __init__(self, expr):
         self.expr = expr
 

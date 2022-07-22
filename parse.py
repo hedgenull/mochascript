@@ -17,15 +17,6 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
-    @_("IDENT LPAREN expr RPAREN")
-    def expr(self, p):
-        """Function call, with arguments"""
-        if val := ENV.get(p.IDENT):
-            val.apply([p.expr.visit()])
-            return val
-        else:
-            abort(f"Undefined function {p.IDENT}")
-
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""

@@ -39,90 +39,55 @@ class Parser(sly.Parser):
         """If-else expression"""
         return IfNode(p.expr1, p.expr0, p.expr2)
 
-    @_("expr PLUS expr")
+    @_("expr PLUS term")
     def expr(self, p):
         """Addition"""
-        return BinOp("+", p.expr0, p.expr1)
+        return BinOp("+", p.expr, p.term)
 
-    @_("expr MINUS expr")
+    @_("expr MINUS term")
     def expr(self, p):
         """Subtraction"""
-        return BinOp("-", p.expr0, p.expr1)
+        return BinOp("-", p.expr, p.term)
 
-    @_("expr MUL expr")
+    @_("term")
     def expr(self, p):
+        """Term"""
+        return p.term
+
+    @_("term MUL atom")
+    def term(self, p):
         """Multiplication"""
-        return BinOp("*", p.expr0, p.expr1)
+        return BinOp("*", p.term, p.atom)
 
-    @_("expr DIV expr")
-    def expr(self, p):
+    @_("term DIV atom")
+    def term(self, p):
         """Division"""
-        return BinOp("/", p.expr0, p.expr1)
+        return BinOp("/", p.term, p.atom)
 
-    @_("expr MOD expr")
-    def expr(self, p):
-        """Modulus"""
-        return BinOp("%", p.expr0, p.expr1)
-
-    @_("expr EQEQ expr")
-    def expr(self, p):
-        """Equal to"""
-        return BinOp("==", p.expr0, p.expr1)
-
-    @_("expr NTEQ expr")
-    def expr(self, p):
-        """Not equal to"""
-        return BinOp("!=", p.expr0, p.expr1)
-
-    @_("expr LT expr")
-    def expr(self, p):
-        """Less than"""
-        return BinOp("<", p.expr0, p.expr1)
-
-    @_("expr GT expr")
-    def expr(self, p):
-        """Greater than"""
-        return BinOp(">", p.expr0, p.expr1)
-
-    @_("expr LTEQ expr")
-    def expr(self, p):
-        """Less than or equal to"""
-        return BinOp("<=", p.expr0, p.expr1)
-
-    @_("expr GTEQ expr")
-    def expr(self, p):
-        """Greater than or equal to"""
-        return BinOp(">=", p.expr0, p.expr1)
-
-    @_("expr AND expr")
-    def expr(self, p):
-        """And"""
-        return BinOp("&&", p.expr0, p.expr1)
-
-    @_("expr OR expr")
-    def expr(self, p):
-        """Or"""
-        return BinOp("||", p.expr0, p.expr1)
+    @_("atom")
+    def term(self, p):
+        """Atom"""
+        return p.atom
 
     @_("NUMBER")
-    def expr(self, p):
+    def atom(self, p):
         """Number"""
         return Number(p.NUMBER)
 
     @_("MINUS NUMBER")
-    def expr(self, p):
+    def atom(self, p):
         """Negative number"""
         n = Number(p.NUMBER)
         n.value = -n.value
         return n
 
     @_("STRING")
-    def expr(self, p):
+    def atom(self, p):
         """String"""
         return String(p.STRING)
 
     @_("IDENT")
-    def expr(self, p):
+    def atom(self, p):
         """Variable reference"""
         if val := ENV[-1].get(p.IDENT):
             return val
@@ -130,7 +95,7 @@ class Parser(sly.Parser):
             abort(f"Undefined variable {p.IDENT}")
 
     @_("LPAREN expr RPAREN")
-    def expr(self, p):
+    def atom(self, p):
         """Parenthesized expression"""
         return p.expr
 

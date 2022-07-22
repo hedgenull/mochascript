@@ -14,6 +14,8 @@ OP_TO_FUNC_MAP = {
     ">": "gt",
     "<=": "le",
     ">=": "ge",
+    "&&": "_and",
+    "||": "_or",
 }
 
 
@@ -21,19 +23,19 @@ class BaseObject:
     """Base class for all objects in the language."""
 
     def add(self, other):
-        return self.visit().add(other.visit().value)
+        return self.visit().add(other.visit())
 
     def sub(self, other):
-        return self.visit().sub(other.visit().value)
+        return self.visit().sub(other.visit())
 
     def mul(self, other):
-        return self.visit().mul(other.visit().value)
+        return self.visit().mul(other.visit())
 
     def div(self, other):
-        return self.visit().div(other.visit().value)
+        return self.visit().div(other.visit())
 
     def mod(self, other):
-        return self.visit().mod(other.visit().value)
+        return self.visit().mod(other.visit())
 
     def lt(self, other):
         return Boolean(self.visit().value < other.visit().value)
@@ -52,6 +54,12 @@ class BaseObject:
 
     def ne(self, other):
         return Boolean(self.visit().value != other.visit().value)
+
+    def _and(self, other):
+        return Boolean(Boolean(self.visit().value).value and Boolean(other.visit().value).value)
+
+    def _or(self, other):
+        return Boolean(Boolean(self.visit().value).value or Boolean(other.visit().value).value)
 
     def visit(self):
         return self
@@ -113,38 +121,6 @@ class Number(Atom):
         else:
             abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
-    # def lt(self, other):
-    #     if isinstance(other, Number):
-    #         return Boolean(self.value < other.value)
-    #     elif isinstance(other, UnInstantiable):
-    #         return self.lt(other.visit())
-    #     else:
-    #         abort(f"Invalid types for operation: Number and {type(other).__name__}")
-
-    # def gt(self, other):
-    #     if isinstance(other, Number):
-    #         return Boolean(self.value > other.value)
-    #     elif isinstance(other, UnInstantiable):
-    #         return self.gt(other.visit())
-    #     else:
-    #         abort(f"Invalid types for operation: Number and {type(other).__name__}")
-
-    # def le(self, other):
-    #     if isinstance(other, Number):
-    #         return Boolean(self.value <= other.value)
-    #     elif isinstance(other, UnInstantiable):
-    #         return self.le(other.visit())
-    #     else:
-    #         abort(f"Invalid types for operation: Number and {type(other).__name__}")
-
-    # def ge(self, other):
-    #     if isinstance(other, Number):
-    #         return Boolean(self.value >= other.value)
-    #     elif isinstance(other, UnInstantiable):
-    #         return self.ge(other.visit())
-    #     else:
-    #         abort(f"Invalid types for operation: Number and {type(other).__name__}")
-
     def repr(self):
         return str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value)
 
@@ -153,7 +129,7 @@ class Boolean(Atom):
     """Boolean class for the language."""
 
     def __init__(self, value=True):
-        self.value = value
+        self.value = bool(value)
 
     def repr(self):
         return str(self.value).lower()
@@ -239,18 +215,43 @@ class Assignment(SpecialExpression):
         self.value = value
 
     def visit(self):
-        ENV[self.name] = self.value
+        ENV[-1][self.name] = self.value
         return self.value
+
+
+class CallNode(SpecialExpression):
+    def __init__(self, expr):
+        self.expr = expr
+
+    def visit(self):
+        return self.expr.visit()
 
 
 class Function(BaseObject):
     """Base function class for the language."""
+
+    def visit(self):
+        return self
 
     def repr(self):
         return f"<function {self.__class__.__name__}>"
 
     def call(self):
         pass
+
+
+class UserDefinedFunction(Function):
+    """User-defined function class for the language."""
+
+    def __init__(self, *args, expr):
+        self.env = Env(**ENV[-1], **{arg: Null() for arg in args})
+        self.args = args
+        self.expr = expr
+
+    def call(self, **kwargs):
+        for key, value in kwargs.items():
+            self.env[key] = value
+        return CallNode(self.expr)
 
 
 class BuiltInFunction(Function):
@@ -263,9 +264,6 @@ class BuiltInFunction(Function):
 class Print(BuiltInFunction):
     """Print function."""
 
-    def visit(self):
-        return self
-
     def call(self, arg):
         print(result := arg.visit().repr())
         return result
@@ -274,18 +272,12 @@ class Print(BuiltInFunction):
 class Input(BuiltInFunction):
     """Input function."""
 
-    def visit(self):
-        return self
-
     def call(self, arg):
         return String(input(arg.visit().repr()))
 
 
 class RandInt(BuiltInFunction):
     """Random integer function."""
-
-    def visit(self):
-        return self
 
     def call(self, arg):
         return Number(randint(1, arg.visit().value))
@@ -311,15 +303,17 @@ class Env(dict):
         return super().__getitem__(key)
 
 
-ENV = Env(
-    **{
-        # Built-in functions
-        "CONST_print": Print(),
-        "CONST_input": Input(),
-        "CONST_rand": RandInt(),
-        # Special constants
-        "CONST_true": Boolean(True),
-        "CONST_false": Boolean(False),
-        "CONST_null": Null(),
-    }
-)
+ENV = [
+    Env(
+        **{
+            # Built-in functions
+            "CONST_print": Print(),
+            "CONST_input": Input(),
+            "CONST_rand": RandInt(),
+            # Special constants
+            "CONST_true": Boolean(True),
+            "CONST_false": Boolean(False),
+            "CONST_null": Null(),
+        }
+    )
+]

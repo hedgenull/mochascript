@@ -12,3 +12,7 @@ Echo* (pronounced "Echo-star") is a simple, interpreted programming language. Th
 
 I decided on the everything-is-an-expression rule because 1. it's cool, interesting, and unusual, and 2. it's harder in some ways but easier in others.
 When I add them, everything from functions to loops will be expressions, meaning they have a return value. Echo* will most likely be a functional programming language.
+
+## Current problems/issues
+
+- Functions are a bit shifty. You can't really reference them or call them. I'm trying to get this just to work. And that's _before_ you start on user-defined functions.

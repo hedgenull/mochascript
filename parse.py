@@ -121,18 +121,6 @@ class Parser(sly.Parser):
         """Parenthesized expression"""
         return p.expr
 
-    @_("expr")
-    def comma_sep(self, p):
-        """Variable reference"""
-        if val := ENV.get(p.IDENT):
-            return val
-        else:
-            abort(f"Undefined variable {p.IDENT}")
-
-    @_("expr COMMA comma_sep")
-    def comma_sep(self, p):
-        return p[-1]
-
     def error(self, tok):
         """Ruh roh"""
         print(f"Syntax error: Unexpected {tok.value}")

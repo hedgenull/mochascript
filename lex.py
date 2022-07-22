@@ -25,6 +25,8 @@ class Lexer(sly.Lexer):
         ARROW,
         FN,
         COMMA,
+        AND,
+        OR
     }
 
     ignore = " \t"
@@ -44,6 +46,8 @@ class Lexer(sly.Lexer):
     LT = r"<"
     GT = r">"
     EQ = r"="
+    AND = r"\&\&"
+    OR = r"\|\|"
     PLUS = r"\+"
     MINUS = r"\-"
     MUL = r"\*"

@@ -17,6 +17,18 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
+    @_("IDENT LPAREN expr RPAREN")
+    def expr(self, p):
+        if not isinstance(ENV[-1][p.IDENT], Function):
+            abort(f"Not a function: {p.IDENT}")
+        else:
+            fn = ENV[-1][p.IDENT]
+            return fn.call(p.expr.visit())
+
+    @_("FN LPAREN IDENT RPAREN ARROW LPAREN expr RPAREN")
+    def expr(self, p):
+        return UserDefinedFunction(p.IDENT, expr=p.expr)
+
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
@@ -82,6 +94,16 @@ class Parser(sly.Parser):
         """Greater than or equal to"""
         return BinOp(">=", p.expr0, p.expr1)
 
+    @_("expr AND expr")
+    def expr(self, p):
+        """And"""
+        return BinOp("&&", p.expr0, p.expr1)
+
+    @_("expr OR expr")
+    def expr(self, p):
+        """Or"""
+        return BinOp("||", p.expr0, p.expr1)
+
     @_("NUMBER")
     def expr(self, p):
         """Number"""
@@ -102,7 +124,7 @@ class Parser(sly.Parser):
     @_("IDENT")
     def expr(self, p):
         """Variable reference"""
-        if val := ENV.get(p.IDENT):
+        if val := ENV[-1].get(p.IDENT):
             return val
         else:
             abort(f"Undefined variable {p.IDENT}")

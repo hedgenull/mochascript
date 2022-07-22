@@ -25,7 +25,8 @@ class Parser(sly.Parser):
     def expr(self, p):
         """Function call, with arguments"""
         if val := ENV.get(p.IDENT):
-            return val(p.expr)
+            val.apply([p.expr.visit()])
+            return val
         else:
             abort(f"Undefined function {p.IDENT}")
 
@@ -33,7 +34,7 @@ class Parser(sly.Parser):
     def expr(self, p):
         """Function call, without arguments"""
         if val := ENV.get(p.IDENT):
-            return val()
+            return val
         else:
             abort(f"Undefined function {p.IDENT}")
 

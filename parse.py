@@ -17,23 +17,11 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
-    @_("FN LPAREN IDENT RPAREN ARROW expr")
-    def expr(self, p):
-        """Function definition"""
-
     @_("IDENT LPAREN expr RPAREN")
     def expr(self, p):
         """Function call, with arguments"""
         if val := ENV.get(p.IDENT):
             val.apply([p.expr.visit()])
-            return val
-        else:
-            abort(f"Undefined function {p.IDENT}")
-
-    @_("IDENT LPAREN RPAREN")
-    def expr(self, p):
-        """Function call, without arguments"""
-        if val := ENV.get(p.IDENT):
             return val
         else:
             abort(f"Undefined function {p.IDENT}")
@@ -132,6 +120,18 @@ class Parser(sly.Parser):
     def expr(self, p):
         """Parenthesized expression"""
         return p.expr
+
+    @_("expr")
+    def comma_sep(self, p):
+        """Variable reference"""
+        if val := ENV.get(p.IDENT):
+            return val
+        else:
+            abort(f"Undefined variable {p.IDENT}")
+
+    @_("expr COMMA comma_sep")
+    def comma_sep(self, p):
+        return p[-1]
 
     def error(self, tok):
         """Ruh roh"""

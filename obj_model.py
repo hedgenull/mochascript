@@ -249,16 +249,15 @@ class Function(BaseObject):
     def repr(self):
         return f"<function {self.__class__.__name__}>"
 
+    def call(self):
+        pass
+
 
 class BuiltInFunction(Function):
     """Base class for built-in functions."""
 
     def repr(self):
         return f"<built-in function {self.__class__.__name__}>"
-
-    def apply(self, args):
-        for idx, arg in enumerate(args):
-            setattr(self, f"arg{idx}", arg)
 
 
 class Print(BuiltInFunction):
@@ -276,14 +275,20 @@ class Input(BuiltInFunction):
     """Input function."""
 
     def visit(self):
-        return String(input(self.arg0.visit().repr()))
+        return self
+
+    def call(self, arg):
+        return String(input(arg.visit().repr()))
 
 
 class RandInt(BuiltInFunction):
     """Random integer function."""
 
     def visit(self):
-        return Number(randint(1, self.arg0.visit().value))
+        return self
+
+    def call(self, arg):
+        return Number(randint(1, arg.visit().value))
 
 
 class Env(dict):
@@ -296,10 +301,11 @@ class Env(dict):
 
     def __setitem__(self, key, value):
         if key in self.constants:
+            print("You can't change a constant!")
             return
         elif key.startswith("CONST_"):
             self.constants.append(key.removeprefix("CONST_"))
-        super().__setitem__(key, value)
+        super().__setitem__(key.removeprefix("CONST_"), value)
 
     def __getitem__(self, key):
         return super().__getitem__(key)

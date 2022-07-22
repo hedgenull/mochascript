@@ -9,30 +9,27 @@ class Parser(sly.Parser):
 
     tokens = Lexer.tokens
 
-    precedence = (
-        ("left", PLUS, MINUS),
-        ("left", MUL, DIV, MOD),
-        ("left", EQEQ, NTEQ, LT, GT, LTEQ, GTEQ),
-    )
-
     # Grammar rules and actions
 
-    @_("IDENT LPAREN expr RPAREN")
-    def expr(self, p):
-        if not isinstance(ENV[-1][p.IDENT], Function):
-            abort(f"Not a function: {p.IDENT}")
-        else:
-            fn = ENV[-1][p.IDENT]
-            return fn.call(p.expr.visit())
+    @_("comp AND expr")
+    def comp(self, p):
+        """And"""
+        return BinOp("&&", p.comp, p.expr)
 
-    @_("FN LPAREN IDENT RPAREN ARROW LPAREN expr RPAREN")
-    def expr(self, p):
-        return UserDefinedFunction(p.IDENT, expr=p.expr)
+    @_("comp OR expr")
+    def comp(self, p):
+        """Or"""
+        return BinOp("||", p.comp, p.expr)
+
+    @_("expr")
+    def comp(self, p):
+        """Expression"""
+        return p.expr
 
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
-        return Assignment(p.IDENT, p.expr.visit())
+        return Assignment(p.IDENT, p.expr)
 
     @_("LPAREN expr IF expr ELSE expr RPAREN")
     def expr(self, p):
@@ -54,32 +51,65 @@ class Parser(sly.Parser):
         """Term"""
         return p.term
 
-    @_("term MUL atom")
+    @_("term MUL factor")
     def term(self, p):
         """Multiplication"""
         return BinOp("*", p.term, p.atom)
 
-    @_("term DIV atom")
+    @_("term DIV factor")
     def term(self, p):
         """Division"""
         return BinOp("/", p.term, p.atom)
 
-    @_("atom")
+    @_("term MOD factor")
     def term(self, p):
+        """Modulus"""
+        return BinOp("%", p.term, p.atom)
+
+    @_("factor")
+    def term(self, p):
+        """Factor"""
+        return p.factor
+
+    @_("factor EQEQ atom")
+    def factor(self, p):
+        """Equal to"""
+        return BinOp("==", p.factor, p.atom)
+
+    @_("factor NTEQ atom")
+    def factor(self, p):
+        """Not equal to"""
+        return BinOp("!=", p.factor, p.atom)
+
+    @_("factor LT atom")
+    def factor(self, p):
+        """Less than"""
+        return BinOp("<", p.factor, p.atom)
+
+    @_("factor GT atom")
+    def factor(self, p):
+        """Greater than"""
+        return BinOp(">", p.factor, p.atom)
+
+    @_("factor LTEQ atom")
+    def factor(self, p):
+        """Less than or equal to"""
+        return BinOp("<=", p.factor, p.atom)
+
+    @_("factor GTEQ atom")
+    def factor(self, p):
+        """Greater than or equal to"""
+        return BinOp(">=", p.factor, p.atom)
+
+    @_("atom")
+    def factor(self, p):
         """Atom"""
         return p.atom
 
     @_("NUMBER")
     def atom(self, p):
         """Number"""
-        return Number(p.NUMBER)
-
-    @_("MINUS NUMBER")
-    def atom(self, p):
-        """Negative number"""
-        n = Number(p.NUMBER)
-        n.value = -n.value
-        return n
+        return Number(p.NUMBER.replace("~", "-"))
 
     @_("STRING")
     def atom(self, p):

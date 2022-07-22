@@ -215,8 +215,8 @@ class Assignment(SpecialExpression):
         self.value = value
 
     def visit(self):
-        ENV[-1][self.name] = self.value
-        return self.value
+        ENV[-1][self.name] = self.value.visit()
+        return ENV[-1][self.name]
 
 
 class CallNode(SpecialExpression):

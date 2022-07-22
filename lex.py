@@ -22,23 +22,18 @@ class Lexer(sly.Lexer):
         RPAREN,
         IF,
         ELSE,
-        ARROW,
-        FN,
-        COMMA,
         AND,
-        OR
+        OR,
     }
 
     ignore = " \t"
     ignore_comment = r"#.*"
 
-    NUMBER = r"\d+"
+    NUMBER = r"[+~]?([0-9]+\.?[0-9]*|\.[0-9]+)"
     IDENT = r"[a-zA-Z_][a-zA-Z0-9_]*"
     STRING = r"(\"[^\"]*\"|\'[^\']*\')"
     LPAREN = r"\("
     RPAREN = r"\)"
-    ARROW = r"=>"
-    COMMA = r","
     EQEQ = r"=="
     NTEQ = r"!="
     LTEQ = r"<="
@@ -57,4 +52,3 @@ class Lexer(sly.Lexer):
     # Special keywords
     IDENT["if"] = IF
     IDENT["else"] = ELSE
-    IDENT["fn"] = FN

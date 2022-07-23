@@ -12,6 +12,8 @@ class Lexer(sly.Lexer):
         GT,
         LTEQ,
         GTEQ,
+        AND,
+        OR,
         STRING,
         PLUS,
         MINUS,
@@ -22,8 +24,8 @@ class Lexer(sly.Lexer):
         RPAREN,
         IF,
         ELSE,
-        AND,
-        OR,
+        MACRO,
+        ARROW,
     }
 
     ignore = " \t"
@@ -48,7 +50,9 @@ class Lexer(sly.Lexer):
     MUL = r"\*"
     DIV = r"\/"
     MOD = r"\%"
+    ARROW = r"->"
 
     # Special keywords
     IDENT["if"] = IF
     IDENT["else"] = ELSE
+    IDENT["macro"] = MACRO

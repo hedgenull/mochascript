@@ -14,3 +14,8 @@ I plan to add functions next. Functions will be expressed in this form:
 
 They'll be called like this:
 `x(1, 2) # evaluates to 3`
+
+I also want to add macros, similar to the ones in C:
+`macro and => &&` will allow 'and' to be used in place of the and operator, '&&'.
+I might have more advanced regex macros, like this:
+`remacro "new object (IDENT) : (VALUE)" => "\1 = \2"`, which would let variables be defined as `new object my_var: my_value`.

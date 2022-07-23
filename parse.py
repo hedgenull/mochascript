@@ -11,6 +11,8 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
+    # @_("MACRO IDENT ARROW ")
+
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
@@ -54,17 +56,17 @@ class Parser(sly.Parser):
     @_("term MUL factor")
     def term(self, p):
         """Multiplication"""
-        return BinOp("*", p.term, p.atom)
+        return BinOp("*", p.term, p.factor)
 
     @_("term DIV factor")
     def term(self, p):
         """Division"""
-        return BinOp("/", p.term, p.atom)
+        return BinOp("/", p.term, p.factor)
 
     @_("term MOD factor")
     def term(self, p):
         """Modulus"""
-        return BinOp("%", p.term, p.atom)
+        return BinOp("%", p.term, p.factor)
 
     @_("factor")
     def term(self, p):

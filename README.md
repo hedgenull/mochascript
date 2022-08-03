@@ -15,4 +15,4 @@ When I add them, everything from functions to loops will be expressions, meaning
 
 ## Current problems/issues
 
-- Functions are a bit shifty. You can't really reference them or call them. I'm trying to get this just to work. And that's _before_ you start on user-defined functions.
+- Functions don't work.

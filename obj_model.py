@@ -86,40 +86,35 @@ class Number(Atom):
             return Number(self.value + other.value)
         elif isinstance(other, SpecialExpression):
             return self.add(other.visit())
-        else:
-            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+        abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def sub(self, other):
         if isinstance(other, Number):
             return Number(self.value - other.value)
         elif isinstance(other, SpecialExpression):
             return self.sub(other.visit())
-        else:
-            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+        abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def mul(self, other):
         if isinstance(other, Number):
             return Number(self.value * other.value)
         elif isinstance(other, SpecialExpression):
             return self.mul(other.visit())
-        else:
-            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+        abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def div(self, other):
         if isinstance(other, Number):
             return Number(self.value / other.value)
         elif isinstance(other, SpecialExpression):
             return self.div(other.visit())
-        else:
-            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+        abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def mod(self, other):
         if isinstance(other, Number):
             return Number(self.value % other.value)
         elif isinstance(other, SpecialExpression):
             return self.mod(other.visit())
-        else:
-            abort(f"Invalid types for operation: Number and {type(other).__name__}")
+        abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def repr(self):
         return str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value)
@@ -154,22 +149,24 @@ class String(Atom):
     def add(self, other):
         if isinstance(other, SpecialExpression):
             return self.add(other.visit())
-        else:
-            return String(self.value + other.repr())
+        return String(self.value + other.repr())
+
+    def sub(self, other):
+        if isinstance(other, SpecialExpression):
+            return self.sub(other.visit())
+        return String(self.value.replace(other.repr(), ""))
 
     def mul(self, other):
         if isinstance(other, Number):
             return String(self.value * other.value)
         elif isinstance(other, SpecialExpression):
-            return self.mul(other.visit())
-        else:
-            abort(f"Invalid types for operation: String and {type(other).__name__}")
+            return self.mul(int(other.visit()))
+        abort(f"Invalid types for operation: String and {type(other).__name__}")
 
     def mod(self, other):
         if isinstance(other, SpecialExpression):
             return self.mod(other.visit())
-        else:
-            return String(self.value.replace("{}", other.repr()))
+        return String(self.value.replace("{}", other.repr()))
 
 
 class SpecialExpression(BaseObject):
@@ -219,72 +216,6 @@ class Assignment(SpecialExpression):
         return ENV[-1][self.name]
 
 
-class CallNode(SpecialExpression):
-    """Callable node for the language."""
-
-    def __init__(self, expr):
-        self.expr = expr
-
-    def visit(self):
-        return self.expr.visit()
-
-
-class Function(BaseObject):
-    """Base function class for the language."""
-
-    def visit(self):
-        return self
-
-    def repr(self):
-        return f"<function {self.__class__.__name__}>"
-
-    def call(self):
-        pass
-
-
-class UserDefinedFunction(Function):
-    """User-defined function class for the language."""
-
-    def __init__(self, *args, expr):
-        self.env = Env(**ENV[-1], **{arg: Null() for arg in args})
-        self.args = args
-        self.expr = expr
-
-    def call(self, **kwargs):
-        for key, value in kwargs.items():
-            self.env[key] = value
-        return CallNode(self.expr)
-
-
-class BuiltInFunction(Function):
-    """Base class for built-in functions."""
-
-    def repr(self):
-        return f"<built-in function {self.__class__.__name__}>"
-
-
-class Print(BuiltInFunction):
-    """Print function."""
-
-    def call(self, arg):
-        print(result := arg.visit().repr())
-        return result
-
-
-class Input(BuiltInFunction):
-    """Input function."""
-
-    def call(self, arg):
-        return String(input(arg.visit().repr()))
-
-
-class RandInt(BuiltInFunction):
-    """Random integer function."""
-
-    def call(self, arg):
-        return Number(randint(1, arg.visit().value))
-
-
 class Env(dict):
     """Environment object. Used to store variables."""
 
@@ -295,7 +226,6 @@ class Env(dict):
 
     def __setitem__(self, key, value):
         if key in self.constants:
-            print("You can't change a constant!")
             return
         elif key.startswith("CONST_"):
             self.constants.append(key.removeprefix("CONST_"))
@@ -308,14 +238,12 @@ class Env(dict):
 ENV = [
     Env(
         **{
-            # Built-in functions
-            "CONST_print": Print(),
-            "CONST_input": Input(),
-            "CONST_rand": RandInt(),
-            # Special constants
+            # Built-in functions:
+            # ...
+            # Special constants:
             "CONST_true": Boolean(True),
             "CONST_false": Boolean(False),
             "CONST_null": Null(),
         }
-    )
+    ),
 ]

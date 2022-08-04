@@ -3,41 +3,44 @@ import sly
 
 class Lexer(sly.Lexer):
     tokens = {
+        NEWLINE,
         NUMBER,
         IDENT,
-        EQ,
+        STRING,
+        LPAREN,
+        RPAREN,
+        LBRACK,
+        RBRACK,
+        COMMA,
         EQEQ,
         NTEQ,
-        LT,
-        GT,
         LTEQ,
         GTEQ,
+        LT,
+        GT,
+        EQ,
         AND,
         OR,
-        STRING,
         PLUS,
         MINUS,
         MUL,
         DIV,
         MOD,
-        LPAREN,
-        RPAREN,
-        LBRACK,
-        RBRACK,
         ARROW,
-        COMMA,
         IF,
         ELSE,
         SAY,
+        ASK,
         EXIT,
     }
 
     ignore = " \t"
     ignore_comment = r"#.*"
 
-    NUMBER = r"[+~]?([0-9]+\.?[0-9]*|\.[0-9]+)"
+    NEWLINE = "\n"
+    NUMBER = r"([0-9]+\.?[0-9]*|\.[0-9]+)"
     IDENT = r"[a-zA-Z_][a-zA-Z0-9_]*"
-    STRING = r"(\"[^\"]*\"|\'[^\']*\')"
+    STRING = r"\"[^\"]*\""
     LPAREN = r"\("
     RPAREN = r"\)"
     LBRACK = r"\["
@@ -63,4 +66,5 @@ class Lexer(sly.Lexer):
     IDENT["if"] = IF
     IDENT["else"] = ELSE
     IDENT["say"] = SAY
+    IDENT["ask"] = ASK
     IDENT["exit"] = EXIT

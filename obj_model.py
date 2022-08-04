@@ -163,7 +163,7 @@ class String(Atom):
 
     def mul(self, other):
         if isinstance(other, Number):
-            return String(self.value * other.value)
+            return String(self.value * int(other.value))
         elif isinstance(other, SpecialExpression):
             return self.mul(int(other.visit()))
         abort(f"Invalid types for operation: String and {type(other).__name__}")
@@ -310,6 +310,16 @@ class SayNode(SpecialExpression):
         return result
 
 
+class AskNode(SpecialExpression):
+    """Get user input."""
+
+    def __init__(self, expr):
+        self.expr = expr
+
+    def visit(self):
+        return String(input(self.expr.visit().repr()))
+
+
 class ExitNode(SpecialExpression):
     """It says the expression, and then exits."""
 
@@ -318,6 +328,17 @@ class ExitNode(SpecialExpression):
 
     def visit(self):
         abort(self.expr.visit())
+
+
+class BlockNode(SpecialExpression):
+    """Multiple lines of code."""
+
+    def __init__(self, *exprs):
+        self.exprs = exprs
+
+    def visit(self):
+        return [expr.visit() for expr in self.exprs][-1]
+
 
 
 class Env(dict):

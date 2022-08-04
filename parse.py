@@ -10,54 +10,79 @@ class Parser(sly.Parser):
     tokens = Lexer.tokens
 
     # Grammar rules and actions
+    @_("expr1 NEWLINE exprs")
+    def exprs(self, p):
+        return BlockNode(p.expr1, p.exprs)
 
-    @_("IDENT EQ expr")
-    def expr(self, p):
+    @_("expr1 NEWLINE")
+    def exprs(self, p):
+        return p.expr1
+
+    @_("expr1")
+    def exprs(self, p):
+        return p.expr1
+
+    @_("NEWLINE")
+    def exprs(self, p):
+        pass
+
+    @_("IDENT EQ expr1")
+    def expr1(self, p):
         """Assignment expression"""
-        return Assignment(p.IDENT, p.expr)
+        return Assignment(p.IDENT, p.expr1)
 
-    @_("EXIT expr")
-    def expr(self, p):
+    @_("expr2")
+    def expr1(self, p):
+        """Expression"""
+        return p.expr2
+
+    @_("EXIT expr1")
+    def expr2(self, p):
         """Exit the program"""
-        return ExitNode(p.expr)
+        return ExitNode(p.expr1)
 
-    @_("SAY expr")
-    def expr(self, p):
+    @_("ASK expr1")
+    def expr2(self, p):
+        """Ask-expression"""
+        return AskNode(p.expr1)
+
+    @_("SAY expr1")
+    def expr2(self, p):
         """Say-expression"""
-        return SayNode(p.expr)
+        return SayNode(p.expr1)
 
-    @_("LPAREN expr IF comp ELSE expr RPAREN")
-    def expr(self, p):
+    @_("LPAREN expr1 IF cmp1 ELSE expr1 RPAREN")
+    def expr2(self, p):
         """If-else expression"""
-        return IfExpression(p.expr1, p.expr0, p.expr1)
+        return IfExpression(p[1], p.cmp1, p[-2])
 
-    @_("expr PLUS comp")
-    def expr(self, p):
+    @_("expr1 PLUS cmp1")
+    def expr2(self, p):
         """Addition"""
-        return BinOp("+", p.expr, p.comp)
+        return BinOp("+", p.expr1, p.cmp1)
 
-    @_("expr MINUS comp")
-    def expr(self, p):
+    @_("expr1 MINUS cmp1")
+    def expr2(self, p):
         """Subtraction"""
-        return BinOp("-", p.expr, p.comp)
+        return BinOp("-", p.expr1, p.cmp1)
 
-    @_("comp")
-    def expr(self, p):
-        """Comparison"""
-        return p.comp
+    @_("cmp1")
+    def expr2(self, p):
+        """Component-1"""
+        return p.cmp1
 
-    @_("comp AND term")
-    def comp(self, p):
+    @_("cmp1 AND term")
+    def cmp1(self, p):
         """And"""
-        return BinOp("&&", p.comp, p.term)
+        return BinOp("&&", p.cmp1, p.term)
 
-    @_("comp OR term")
-    def comp(self, p):
+    @_("cmp1 OR term")
+    def cmp1(self, p):
         """Or"""
-        return BinOp("||", p.comp, p.term)
+        return BinOp("||", p.cmp1, p.term)
 
     @_("term")
-    def comp(self, p):
+    def cmp1(self, p):
         """Term"""
         return p.term
 
@@ -81,38 +106,48 @@ class Parser(sly.Parser):
         """Factor"""
         return p.factor
 
-    @_("factor EQEQ atom")
+    @_("factor EQEQ cmp2")
     def factor(self, p):
         """Equal to"""
-        return BinOp("==", p.factor, p.atom)
+        return BinOp("==", p.factor, p.cmp2)
 
-    @_("factor NTEQ atom")
+    @_("factor NTEQ cmp2")
     def factor(self, p):
         """Not equal to"""
-        return BinOp("!=", p.factor, p.atom)
+        return BinOp("!=", p.factor, p.cmp2)
 
-    @_("factor LT atom")
+    @_("cmp2")
     def factor(self, p):
+        """Component-2"""
+        return p.cmp2
+
+    @_("cmp2 LT atom")
+    def cmp2(self, p):
         """Less than"""
-        return BinOp("<", p.factor, p.atom)
+        return BinOp("<", p.cmp2, p.atom)
 
-    @_("factor GT atom")
-    def factor(self, p):
+    @_("cmp2 GT atom")
+    def cmp2(self, p):
         """Greater than"""
-        return BinOp(">", p.factor, p.atom)
+        return BinOp(">", p.cmp2, p.atom)
 
-    @_("factor LTEQ atom")
-    def factor(self, p):
+    @_("cmp3")
+    def cmp2(self, p):
+        """Component-3"""
+        return p.cmp3
+
+    @_("cmp3 LTEQ atom")
+    def cmp3(self, p):
         """Less than or equal to"""
-        return BinOp("<=", p.factor, p.atom)
+        return BinOp("<=", p.cmp3, p.atom)
 
-    @_("factor GTEQ atom")
-    def factor(self, p):
+    @_("cmp3 GTEQ atom")
+    def cmp3(self, p):
         """Greater than or equal to"""
-        return BinOp(">=", p.factor, p.atom)
+        return BinOp(">=", p.cmp3, p.atom)
 
     @_("atom")
-    def factor(self, p):
+    def cmp3(self, p):
         """Atom"""
         return p.atom
 
@@ -134,20 +169,20 @@ class Parser(sly.Parser):
         else:
             abort(f"Undefined variable {p.IDENT}")
 
-    @_("LPAREN expr RPAREN")
+    @_("LPAREN expr1 RPAREN")
     def atom(self, p):
         """Parenthesized expression"""
-        return p.expr
+        return p.expr1
 
-    @_("MINUS expr")
+    @_("MINUS expr1")
     def atom(self, p):
         """Negated expression"""
-        return UnOp("-", p.expr)
+        return UnOp("-", p.expr2)
 
-    @_("PLUS expr")
+    @_("PLUS expr2")
     def atom(self, p):
         """Negated expression"""
-        return UnOp("+", p.expr)
+        return UnOp("+", p.expr2)
 
     @_("array")
     def atom(self, p):
@@ -159,20 +194,20 @@ class Parser(sly.Parser):
         """Array"""
         return Array(p.list)
 
-    @_("expr COMMA list")
+    @_("expr2 COMMA list")
     def list(self, p):
         """Comma-separated list"""
         if isinstance(p.list, tuple):
-            return p.expr, *p.list
+            return p.expr2, *p.list
         else:
-            return p.expr, p.list
+            return p.expr2, p.list
 
-    @_("expr COMMA")
+    @_("expr2 COMMA")
     def list(self, p):
         """Comma-separated list"""
         return p.expr
 
-    @_("expr")
+    @_("expr2")
     def list(self, p):
         """Comma-separated list"""
-        return p.expr
+        return p.expr2

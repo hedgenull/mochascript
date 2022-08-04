@@ -15,8 +15,3 @@ my_second_var = (10 if my_var == 20 else 5);
 
 say my_second_var;
 ```
-
-## Issues:
-
-- The interpreter can only handle single lines.
-

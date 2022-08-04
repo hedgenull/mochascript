@@ -33,5 +33,5 @@ if __name__ == "__main__":
                 ast = parser.parse(tokens)
                 ast.visit()
     else:
-        print("Starting interactive Echo* interpreter.")
+        print("Starting interactive MochaScript interpreter.")
         shell(lexer, parser)

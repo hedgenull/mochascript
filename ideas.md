@@ -10,10 +10,3 @@ x(1, 2) # evaluates to 3
 
 I also kinda want to add macros, similar to the ones in C, just for fun. For example:
 `macro and => &&` will allow 'and' to be used in place of the and operator, `&&`.
-
-The name "Echo*" isn't great and I kind of want to change it. Here are some ideas for names:
-- MochaScript
-- Neon
-- Jaguar
-- Aether[Script?]
-- Triad

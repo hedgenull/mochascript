@@ -149,7 +149,9 @@ class String(Atom):
     """String class for the language."""
 
     def __init__(self, value=""):
-        self.value = str(value).strip("\"'").replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
+        self.value = (
+            str(value).strip("\"'").replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
+        )
 
     def add(self, other):
         if isinstance(other, SpecialExpression):
@@ -338,7 +340,6 @@ class BlockNode(SpecialExpression):
 
     def visit(self):
         return [expr.visit() for expr in self.exprs][-1]
-
 
 
 class Env(dict):

@@ -1,21 +1,27 @@
-I started this late. So, at the time of writing (Jul. 21, 2022, at 6:37 PM), I already have:
+I started this late. So, at the time of writing (Jul. 21, 2022, at 6:37 PM), Echo* already has:
 - numbers
 - strings
 - math
 - booleans
+- null
 - if-expressions
 - rudimentary string formatting
 - comments
 - constants
 - variables
 
-I plan to add functions next. Functions will be expressed in this form:
-`x = (a, b) => (a + b)`
+Right now, built-in functions like `print` are nonoperational. That means that for the time being, and since Echo* will probably never be a big, popular language, `print` might be a keyword instead of a function. Gross, I know, but I think it's necessary, since printing is kind of an important thing for a programming language.
+
+
+I plan to add functions. Functions will be expressed in this form:
+```
+x = (a, b) => (a + b)
+```
 
 They'll be called like this:
-`x(1, 2) # evaluates to 3`
+```
+x(1, 2) # evaluates to 3
+```
 
-I also want to add macros, similar to the ones in C:
-`macro and => &&` will allow 'and' to be used in place of the and operator, '&&'.
-I might have more advanced regex macros, like this:
-`remacro "new object (IDENT) : (VALUE)" => "\1 = \2"`, which would let variables be defined as `new object my_var: my_value`.
+I also kinda want to add macros, similar to the ones in C, just for fun. For example:
+`macro and => &&` will allow 'and' to be used in place of the and operator, `&&`.

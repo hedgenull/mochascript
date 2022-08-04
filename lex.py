@@ -24,7 +24,7 @@ class Lexer(sly.Lexer):
         RPAREN,
         IF,
         ELSE,
-        MACRO,
+        SAY,
         ARROW,
     }
 
@@ -50,9 +50,9 @@ class Lexer(sly.Lexer):
     MUL = r"\*"
     DIV = r"\/"
     MOD = r"\%"
-    ARROW = r"->"
+    ARROW = r"=>"
 
     # Special keywords
     IDENT["if"] = IF
     IDENT["else"] = ELSE
-    IDENT["macro"] = MACRO
+    IDENT["say"] = SAY

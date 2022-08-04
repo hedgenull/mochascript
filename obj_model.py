@@ -1,6 +1,6 @@
 from random import randint
 
-from common import *
+from utils import *
 
 OP_TO_FUNC_MAP = {
     "+": "add",
@@ -188,7 +188,7 @@ class BinOp(SpecialExpression):
         return self.visit().repr()
 
 
-class IfNode(SpecialExpression):
+class IfExpression(SpecialExpression):
     """If-expression class for the language."""
 
     def __init__(self, condition, true_block, false_block):
@@ -214,6 +214,18 @@ class Assignment(SpecialExpression):
     def visit(self):
         ENV[-1][self.name] = self.value.visit()
         return ENV[-1][self.name]
+
+
+class SayExpression(SpecialExpression):
+    """It says the expression."""
+
+    def __init__(self, expr):
+        self.expr = expr
+
+    def visit(self):
+        result = self.expr.visit()
+        print(result.repr())
+        return result
 
 
 class Env(dict):

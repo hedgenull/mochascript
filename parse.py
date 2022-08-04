@@ -11,17 +11,20 @@ class Parser(sly.Parser):
 
     # Grammar rules and actions
 
-    # @_("MACRO IDENT ARROW ")
-
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
         return Assignment(p.IDENT, p.expr)
 
+    @_("SAY expr")
+    def expr(self, p):
+        """Say-expression"""
+        return SayExpression(p.expr)
+
     @_("LPAREN expr IF comp ELSE expr RPAREN")
     def expr(self, p):
         """If-else expression"""
-        return IfNode(p.expr1, p.expr0, p.expr2)
+        return IfExpression(p.expr1, p.expr0, p.expr1)
 
     @_("expr PLUS comp")
     def expr(self, p):

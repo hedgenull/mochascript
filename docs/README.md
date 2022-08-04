@@ -182,12 +182,19 @@ Booleans- `true` and `false`- are a simple data type in Echo*. They are _not_ re
 This assigns `b` to 20, because the condition `a == 1` evaluates to false. Here's a quick list of logical/comparison operators.
 
 `==`: Equality operator.
+
 `!=`: Negated equality operator (not-equal).
+
 `&&`: And operator.
+
 `||`: Or operator.
+
 `>`: Greater-than operator.
+
 `<`: Less-than operator.
+
 `>=`: Greater-than or equal to operator.
+
 `<=`: Less-than or equal to operator.
 
 There is no `elif` or `else if` keyword/construct in Echo*, but it can be simulated with multiple if-expressions.

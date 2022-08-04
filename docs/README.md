@@ -78,7 +78,7 @@ Like in Python, strings can be multiplied with numbers. Here's an example:
 ```
 
 
-## 3: Variables
+## 3: Variables + constants
 
 Echo*'s variables are no different than Python's, and they are defined in just the same way. No `var` keywords, no type-casting, no declaration _then_ definition- variables in Echo* can be used as simply as this:
 
@@ -99,6 +99,26 @@ An interesting side effect of everything in Echo* being an expression is that va
 ```
 
 Assignments return the value of the variable just assigned. Multiple assignments are possible at once, then, like `x = y = z = 10`, which assigns 10 to `x`, `y`, and `z`. More complex assignments are permitted- `x = 1 + y = 3` assigns `y` to 3 and `x` to `1 + y`.
+
+Echo* also supports constants. These are variables that, once defined, can't be changed. `true`, `false`, and `null` are some built-in constants. Constants can be defined like this:
+
+```py
+>>> CONST_my_constant = 10
+10
+```
+
+This defines a constant named `my_constant`. It's important to recognize that the `CONST_` part of the name is chopped off.
+
+```py
+>>> CONST_my_constant = "a constant"
+"a constant"
+>>> my_constant
+"a constant"
+>>> my_constant = 4 # Trying to reassign a constant fails
+"a constant"
+>>> my_constant
+"a constant"
+```
 
 ## 4: The `say` keyword
 
@@ -176,4 +196,17 @@ There is no `elif` or `else if` keyword/construct in Echo*, but it can be simula
 >>> # If-else if-else demo in Echo*
 >>> a = 5
 >>> b = (2 if a < 5 else (3 if a == 5 else 4))
+```
+
+## 7: A quick note on `null`
+
+The `null` value in Echo* is equivalent to `None` in Python, `void` in C/C++, and `nil` in Ruby. It's a falsy value and doesn't have much use, but it exists nonetheless.
+
+## 8: The `exit` keyword
+
+The `exit` keyword simply aborts the program with the given message- it prints and then exits.
+
+```py
+>>> exit "Bye bye"
+Bye bye
 ```

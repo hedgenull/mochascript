@@ -162,6 +162,16 @@ class Array(Atom):
             return self.add(other.visit())
         abort(f"Invalid types for operation: Array and {type(other).__name__}")
 
+    def sub(self, other):
+        if isinstance(other, Atom):
+            copy = self.values[:]
+            while other in copy:
+                copy.remove(other)
+            return Array(copy)
+        elif isinstance(other, SpecialExpression):
+            return self.sub(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
     def mul(self, other):
         if isinstance(other, Number):
             return Array(self.values * other.value)

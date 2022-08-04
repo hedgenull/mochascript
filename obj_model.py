@@ -1,4 +1,5 @@
 from random import randint
+from re import A
 
 from utils import *
 
@@ -117,7 +118,13 @@ class Number(Atom):
         abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def repr(self):
-        return str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value)
+        return (
+            "0"
+            if self.value == 0
+            else str(self.value).strip(".0")
+            if self.value % 1 == 0
+            else str(self.value)
+        )
 
 
 class Boolean(Atom):
@@ -138,6 +145,39 @@ class Null(Atom):
 
     def repr(self):
         return "null"
+
+
+class Array(Atom):
+    """Array/list class for the language."""
+
+    def __init__(self, values):
+        self.values = [value.visit() for value in values]
+
+    def add(self, other):
+        if isinstance(other, Array):
+            return Array(self.values.extend(other.values))
+        elif isinstance(other, Atom):
+            return Array(self.values + [other.visit()])
+        elif isinstance(other, SpecialExpression):
+            return self.add(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def mul(self, other):
+        if isinstance(other, Number):
+            return Array(self.values * other.value)
+        elif isinstance(other, SpecialExpression):
+            return self.mul(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def mod(self, other):
+        if isinstance(other, Number):
+            return self.values[int(other.value)]
+        elif isinstance(other, SpecialExpression):
+            return self.mod(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def repr(self):
+        return f"[{', '.join((value.repr() for value in self.values))}]"
 
 
 class String(Atom):

@@ -22,10 +22,13 @@ class Lexer(sly.Lexer):
         MOD,
         LPAREN,
         RPAREN,
+        LBRACK,
+        RBRACK,
         IF,
         ELSE,
         SAY,
         ARROW,
+        COMMA,
     }
 
     ignore = " \t"
@@ -36,6 +39,9 @@ class Lexer(sly.Lexer):
     STRING = r"(\"[^\"]*\"|\'[^\']*\')"
     LPAREN = r"\("
     RPAREN = r"\)"
+    LBRACK = r"\["
+    RBRACK = r"\]"
+    COMMA = r","
     EQEQ = r"=="
     NTEQ = r"!="
     LTEQ = r"<="

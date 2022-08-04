@@ -134,6 +134,30 @@ class Parser(sly.Parser):
         """Parenthesized expression"""
         return p.expr
 
-    def error(self, tok):
-        """Ruh roh"""
-        print(f"Syntax error: Unexpected {tok.value}")
+    @_("array")
+    def atom(self, p):
+        """Array"""
+        return p.array
+
+    @_("LBRACK list RBRACK")
+    def array(self, p):
+        """Array"""
+        return Array(p.list)
+
+    @_("expr COMMA list")
+    def list(self, p):
+        """Comma-separated list"""
+        if isinstance(p.list, tuple):
+            return p.expr, *p.list
+        else:
+            return p.expr, p.list
+
+    @_("expr COMMA")
+    def list(self, p):
+        """Comma-separated list"""
+        return p.expr
+
+    @_("expr")
+    def list(self, p):
+        """Comma-separated list"""
+        return p.expr

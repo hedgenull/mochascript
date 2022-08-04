@@ -1,6 +1,6 @@
-# Echo*: Getting Started
+# Echo* Documentation
 
-Echo* is a simple, dynamically typed, very basic language to learn, and here I'll explain the basics of the language.
+Echo* is a simple, dynamically typed, very basic language that doesn't really serve any special purpose. I made it for fun and profit. However, despite its lack of new features, you should still learn it.
 
 
 ## 1: Basic Math + Numbers
@@ -99,3 +99,13 @@ An interesting side effect of everything in Echo* being an expression is that va
 ```
 
 Assignments return the value of the variable just assigned. Multiple assignments are possible at once, then, like `x = y = z = 10`, which assigns 10 to `x`, `y`, and `z`. More complex assignments are permitted- `x = 1 + y = 3` assigns `y` to 3 and `x` to `1 + y`.
+
+## The `say` keyword
+
+The `say` keyword is the print function of Echo*: it prints the value given and then returns it. `say` can accept any data type, as it calls the value's `repr()` method. In an interactive shell, the `say` keyword isn't so useful, since return values are already printed. This means that using `say` in a shell will print your value twice.
+
+```py
+>>> say 4
+4
+4
+```

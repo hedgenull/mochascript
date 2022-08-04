@@ -8,7 +8,7 @@ Echo* (pronounced "Echo-star") is a simple, interpreted programming language. Th
 
 `x = (true if y > 1 else false)`: If y is greater than 1, sets x to true. Otherwise, sets x to false.
 
-`(x = true if (y > 1) else x = false)`: The same as above.
+`(x = true if (y > 1) else x = false)`: The same as above, but less efficient.
 
 I decided on the everything-is-an-expression rule because 1. it's cool, interesting, and unusual, and 2. it's harder in some ways but easier in others.
 When I add them, everything from functions to loops will be expressions, meaning they have a return value. Echo* will most likely be a functional programming language.

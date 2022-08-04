@@ -8,13 +8,13 @@ When I add them, everything from functions to loops will be expressions, meaning
 ## Syntax example:
 
 ```py
-say "Hello world!"
+say "Hello world!";;
 
-my_var = 10
+my_var = 10;
 
-my_second_var = (10 if my_var == 20 else 5)
+my_second_var = (10 if my_var == 20 else 5);
 
-say my_second_var
+say my_second_var;
 ```
 
 ## Issues:

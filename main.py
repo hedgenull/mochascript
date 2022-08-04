@@ -8,10 +8,12 @@ def shell(lexer: Lexer, parser: Parser):
     """Start the interactive shell."""
     while True:
         source = input(">>> ").strip()
-        if source == "exit":
-            break
-        elif source == "":
+        if not source:
             continue
+
+        if not source.endswith(";"):
+            source += ";"
+
         tokens = lexer.tokenize(source)
         ast = parser.parse(tokens)
         try:

@@ -9,22 +9,17 @@ class Parser(sly.Parser):
 
     tokens = Lexer.tokens
 
-    # Grammar rules and actions
-    @_("expr1 NEWLINE exprs")
+    @_("exprs expr1")
+    def exprs(self, p):
+        return BlockNode(p.exprs, p.expr1)
+
+    @_("expr1 LINE_TERM exprs")
     def exprs(self, p):
         return BlockNode(p.expr1, p.exprs)
 
-    @_("expr1 NEWLINE")
+    @_("expr1 LINE_TERM")
     def exprs(self, p):
         return p.expr1
-
-    @_("expr1")
-    def exprs(self, p):
-        return p.expr1
-
-    @_("NEWLINE")
-    def exprs(self, p):
-        pass
 
     @_("IDENT EQ expr1")
     def expr1(self, p):

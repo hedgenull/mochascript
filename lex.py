@@ -3,7 +3,6 @@ import sly
 
 class Lexer(sly.Lexer):
     tokens = {
-        NEWLINE,
         NUMBER,
         IDENT,
         STRING,
@@ -27,6 +26,7 @@ class Lexer(sly.Lexer):
         DIV,
         MOD,
         ARROW,
+        LINE_TERM,
         IF,
         ELSE,
         SAY,
@@ -34,10 +34,9 @@ class Lexer(sly.Lexer):
         EXIT,
     }
 
-    ignore = " \t"
+    ignore = " \t\n"
     ignore_comment = r"#.*"
 
-    NEWLINE = "\n"
     NUMBER = r"([0-9]+\.?[0-9]*|\.[0-9]+)"
     IDENT = r"[a-zA-Z_][a-zA-Z0-9_]*"
     STRING = r"\"[^\"]*\""
@@ -61,6 +60,7 @@ class Lexer(sly.Lexer):
     DIV = r"\/"
     MOD = r"\%"
     ARROW = r"=>"
+    LINE_TERM = ";"
 
     # Special keywords
     IDENT["if"] = IF

@@ -40,7 +40,7 @@ More complex operations are allowed, such as `2 + (3 * (10 - 9))`, which evaluat
 In Echo*, strings are very simple objects. You don't have to worry about encodings or memory allocation- they're just as simple as numbers. A string is created like `"this"`. Double quotes and single quotes are both allowed. However, it's worth noting that escaped quotes are not supported in Echo*, so if you want to use an apostrophe inside your string, you must instantiate the string with double quotes. This is like many other programming languages.
 
 ### String formatting
-Currently, Echo* supports very basic string formatting. This is done using the modulo operator (`%`) and brackets (`{}`) inside a string. Modding a string _s_ with a value _v_ replaces any occurrences of `{}` in _s_ with the `repr()` of _v_. Here's an example:
+Currently, Echo* supports very basic string formatting. This is done using the modulo operator (`%`) and curly brackets (`{}`) inside a string. Modding a string _s_ with a value _v_ replaces any occurrences of `{}` in _s_ with the `repr()` of _v_. Here's an example:
 
 ```py
 >>> "Hello, {}!" % "world"
@@ -100,7 +100,7 @@ An interesting side effect of everything in Echo* being an expression is that va
 
 Assignments return the value of the variable just assigned. Multiple assignments are possible at once, then, like `x = y = z = 10`, which assigns 10 to `x`, `y`, and `z`. More complex assignments are permitted- `x = 1 + y = 3` assigns `y` to 3 and `x` to `1 + y`.
 
-## The `say` keyword
+## 4: The `say` keyword
 
 The `say` keyword is the print function of Echo*: it prints the value given and then returns it. `say` can accept any data type, as it calls the value's `repr()` method. In an interactive shell, the `say` keyword isn't so useful, since return values are already printed. This means that using `say` in a shell will print your value twice.
 
@@ -108,4 +108,72 @@ The `say` keyword is the print function of Echo*: it prints the value given and 
 >>> say 4
 4
 4
+```
+
+## 5: Arrays
+
+Echo*'s arrays are similar to lists in Python or arrays in Ruby. They are defined using the same `[..., ..., ...]` syntax and can contain any number of elements, and any types. Individual elements of arrays are 0-indexed and accessed with the modulo operator. For example:
+
+```py
+>>> my_array = [1, 2, 3, 4, 5]
+[1, 2, 3, 4, 5]
+>>> my_array % 0
+1
+>>> my_array % 3
+4
+>>> my_array % -1
+5
+```
+
+### Appending values
+Values can be appended to arrays with the addition operator.
+
+```py
+>>> [1, 2, 3] + 4
+[1, 2, 3, 4]
+```
+
+### Multiplying arrays
+Arrays can be multiplied with numbers like so:
+
+```py
+>>> [1, 2, 3] * 3
+[1, 2, 3, 1, 2, 3, 1, 2, 3]
+```
+### Reversing arrays
+Negating arrays using the unary minus operator (`-`) reverses their elements.
+
+```py
+>>> -["a", "b", 3]
+[3, "b", "a"]
+```
+
+## 6: Booleans and if-expressions
+
+Booleans- `true` and `false`- are a simple data type in Echo*. They are _not_ related to numbers, so math can't be used directly on booleans. The main use of booleans is in if-expressions, Echo*'s only control flow so far. If-expressions have the structure `([true_expr] if [condition] else [false_expr])`. For example:
+
+```py
+>>> a = 2
+10
+>>> b = (10 if a == 1 else 20)
+20
+```
+
+This assigns `b` to 20, because the condition `a == 1` evaluates to false. Here's a quick list of logical/comparison operators.
+
+`==`: Equality operator.
+`!=`: Negated equality operator (not-equal).
+`&&`: And operator.
+`||`: Or operator.
+`>`: Greater-than operator.
+`<`: Less-than operator.
+`>=`: Greater-than or equal to operator.
+`<=`: Less-than or equal to operator.
+
+There is no `elif` or `else if` keyword/construct in Echo*, but it can be simulated with multiple if-expressions.
+
+```py
+>>> # If-else if-else demo in Echo*
+>>> a = 5
+>>> b = (2 if a < 5 else (3 if a == 5 else 4))
 ```

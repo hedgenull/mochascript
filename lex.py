@@ -24,11 +24,12 @@ class Lexer(sly.Lexer):
         RPAREN,
         LBRACK,
         RBRACK,
+        ARROW,
+        COMMA,
         IF,
         ELSE,
         SAY,
-        ARROW,
-        COMMA,
+        EXIT,
     }
 
     ignore = " \t"
@@ -62,3 +63,4 @@ class Lexer(sly.Lexer):
     IDENT["if"] = IF
     IDENT["else"] = ELSE
     IDENT["say"] = SAY
+    IDENT["exit"] = EXIT

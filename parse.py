@@ -16,10 +16,15 @@ class Parser(sly.Parser):
         """Assignment expression"""
         return Assignment(p.IDENT, p.expr)
 
+    @_("EXIT expr")
+    def expr(self, p):
+        """Exit the program"""
+        return ExitNode(p.expr)
+
     @_("SAY expr")
     def expr(self, p):
         """Say-expression"""
-        return SayExpression(p.expr)
+        return SayNode(p.expr)
 
     @_("LPAREN expr IF comp ELSE expr RPAREN")
     def expr(self, p):
@@ -114,7 +119,7 @@ class Parser(sly.Parser):
     @_("NUMBER")
     def atom(self, p):
         """Number"""
-        return Number(p.NUMBER.replace("~", "-"))
+        return Number(p.NUMBER)
 
     @_("STRING")
     def atom(self, p):
@@ -133,6 +138,16 @@ class Parser(sly.Parser):
     def atom(self, p):
         """Parenthesized expression"""
         return p.expr
+
+    @_("MINUS expr")
+    def atom(self, p):
+        """Negated expression"""
+        return UnOp("-", p.expr)
+
+    @_("PLUS expr")
+    def atom(self, p):
+        """Negated expression"""
+        return UnOp("+", p.expr)
 
     @_("array")
     def atom(self, p):

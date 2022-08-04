@@ -1,9 +1,10 @@
+import re
+from calendar import c
 from random import randint
-from re import A
 
 from utils import *
 
-OP_TO_FUNC_MAP = {
+BINOP_TO_FUNC_MAP = {
     "+": "add",
     "-": "sub",
     "*": "mul",
@@ -17,6 +18,11 @@ OP_TO_FUNC_MAP = {
     ">=": "ge",
     "&&": "_and",
     "||": "_or",
+}
+
+UNOP_TO_FUNC_MAP = {
+    "+": "pos",
+    "-": "neg",
 }
 
 
@@ -55,6 +61,12 @@ class BaseObject:
 
     def ne(self, other):
         return Boolean(self.visit().value != other.visit().value)
+
+    def pos(self):
+        return self.visit().pos()
+
+    def neg(self):
+        return self.visit().neg()
 
     def _and(self, other):
         return Boolean(Boolean(self.visit().value).value and Boolean(other.visit().value).value)
@@ -117,6 +129,12 @@ class Number(Atom):
             return self.mod(other.visit())
         abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
+    def pos(self):
+        return Number(+self.value)
+
+    def neg(self):
+        return Number(-self.value)
+
     def repr(self):
         return (
             "0"
@@ -127,24 +145,33 @@ class Number(Atom):
         )
 
 
-class Boolean(Atom):
-    """Boolean class for the language."""
+class String(Atom):
+    """String class for the language."""
 
-    def __init__(self, value=True):
-        self.value = bool(value)
+    def __init__(self, value=""):
+        self.value = str(value).strip("\"'")
 
-    def repr(self):
-        return str(self.value).lower()
+    def add(self, other):
+        if isinstance(other, SpecialExpression):
+            return self.add(other.visit())
+        return String(self.value + other.repr())
 
+    def sub(self, other):
+        if isinstance(other, SpecialExpression):
+            return self.sub(other.visit())
+        return String(self.value.replace(other.repr(), ""))
 
-class Null(Atom):
-    """Null, None, void, nil, whatever you want to call it."""
+    def mul(self, other):
+        if isinstance(other, Number):
+            return String(self.value * other.value)
+        elif isinstance(other, SpecialExpression):
+            return self.mul(int(other.visit()))
+        abort(f"Invalid types for operation: String and {type(other).__name__}")
 
-    def __init__(self):
-        self.value = None
-
-    def repr(self):
-        return "null"
+    def mod(self, other):
+        if isinstance(other, SpecialExpression):
+            return self.mod(other.visit())
+        return String(self.value.replace("{}", other.repr()))
 
 
 class Array(Atom):
@@ -186,37 +213,31 @@ class Array(Atom):
             return self.mod(other.visit())
         abort(f"Invalid types for operation: Array and {type(other).__name__}")
 
+    def neg(self):
+        return Array(self.values[::-1])
+
     def repr(self):
         return f"[{', '.join((value.repr() for value in self.values))}]"
 
 
-class String(Atom):
-    """String class for the language."""
+class Boolean(Atom):
+    """Boolean class for the language."""
 
-    def __init__(self, value=""):
-        self.value = str(value).strip("\"'")
+    def __init__(self, value=True):
+        self.value = bool(value)
 
-    def add(self, other):
-        if isinstance(other, SpecialExpression):
-            return self.add(other.visit())
-        return String(self.value + other.repr())
+    def repr(self):
+        return str(self.value).lower()
 
-    def sub(self, other):
-        if isinstance(other, SpecialExpression):
-            return self.sub(other.visit())
-        return String(self.value.replace(other.repr(), ""))
 
-    def mul(self, other):
-        if isinstance(other, Number):
-            return String(self.value * other.value)
-        elif isinstance(other, SpecialExpression):
-            return self.mul(int(other.visit()))
-        abort(f"Invalid types for operation: String and {type(other).__name__}")
+class Null(Atom):
+    """Null, None, void, nil, whatever you want to call it."""
 
-    def mod(self, other):
-        if isinstance(other, SpecialExpression):
-            return self.mod(other.visit())
-        return String(self.value.replace("{}", other.repr()))
+    def __init__(self):
+        self.value = None
+
+    def repr(self):
+        return "null"
 
 
 class SpecialExpression(BaseObject):
@@ -232,10 +253,21 @@ class BinOp(SpecialExpression):
         self.left = left
 
     def visit(self):
-        return eval(f"self.right.{OP_TO_FUNC_MAP[self.op]}(self.left)")
+        return eval(f"self.right.{BINOP_TO_FUNC_MAP[self.op]}(self.left)")
 
     def repr(self):
         return self.visit().repr()
+
+
+class UnOp(SpecialExpression):
+    """Unary operation class for the language."""
+
+    def __init__(self, op, value):
+        self.op = op
+        self.value = value
+
+    def visit(self):
+        return eval(f"self.value.{UNOP_TO_FUNC_MAP[self.op]}()")
 
 
 class IfExpression(SpecialExpression):
@@ -266,7 +298,7 @@ class Assignment(SpecialExpression):
         return ENV[-1][self.name]
 
 
-class SayExpression(SpecialExpression):
+class SayNode(SpecialExpression):
     """It says the expression."""
 
     def __init__(self, expr):
@@ -276,6 +308,16 @@ class SayExpression(SpecialExpression):
         result = self.expr.visit()
         print(result.repr())
         return result
+
+
+class ExitNode(SpecialExpression):
+    """It says the expression, and then exits."""
+
+    def __init__(self, expr=String()):
+        self.expr = expr
+
+    def visit(self):
+        abort(self.expr.visit())
 
 
 class Env(dict):

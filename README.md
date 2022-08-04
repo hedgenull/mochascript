@@ -5,7 +5,7 @@ MochaScript is a simple, interpreted programming language made for fun and profi
 I decided on the everything-is-an-expression rule because 1. it's cool, interesting, and unusual, and 2. it's harder in some ways but easier in others.
 When I add them, everything from functions to loops will be expressions, meaning they have a return value. MochaScript will most likely be a functional programming language.
 
-## Syntax example:
+### Example program
 
 ```py
 say "Hello world!";

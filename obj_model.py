@@ -288,6 +288,25 @@ class IfExpression(SpecialExpression):
         )
 
 
+class ForExpression(SpecialExpression):
+    """For-loop expression for the language."""
+
+    def __init__(self, iname, ival, toval, block):
+        self.iname = iname
+        self.ival = ival
+        self.toval = toval
+        self.block = block
+        Assignment(self.iname, self.ival).visit()
+
+    def visit(self):
+        if ENV[-1][self.iname] != self.toval:
+            self.ival += 1
+            Assignment(self.iname, self.ival).visit()
+            self.visit()
+
+        return self.block.visit()
+
+
 class Assignment(SpecialExpression):
     """Assignment manager for the language."""
 

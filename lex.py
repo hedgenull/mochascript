@@ -32,6 +32,8 @@ class Lexer(sly.Lexer):
         SAY,
         ASK,
         EXIT,
+        FOR,
+        TO,
     }
 
     ignore = " \t\n"
@@ -68,3 +70,5 @@ class Lexer(sly.Lexer):
     IDENT["say"] = SAY
     IDENT["ask"] = ASK
     IDENT["exit"] = EXIT
+    IDENT["for"] = FOR
+    IDENT["to"] = TO

@@ -9,7 +9,7 @@ class Parser(sly.Parser):
 
     tokens = Lexer.tokens
 
-    @_("exprs expr1")
+    @_("exprs")
     def exprs(self, p):
         return BlockNode(p.exprs, p.expr1)
 
@@ -46,7 +46,12 @@ class Parser(sly.Parser):
         """Say-expression"""
         return SayNode(p.expr1)
 
-    @_("LPAREN expr1 IF cmp1 ELSE expr1 RPAREN")
+    @_("FOR IDENT EQ expr1 TO expr1 LPAREN exprs RPAREN")
+    def expr2(self, p):
+        """For-to loop"""
+        return ForExpression(p.IDENT, p.expr10, p.expr11, p.exprs)
+
+    @_("LPAREN exprs IF cmp1 ELSE exprs RPAREN")
     def expr2(self, p):
         """If-else expression"""
         return IfExpression(p[1], p.cmp1, p[-2])

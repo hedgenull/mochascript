@@ -9,10 +9,6 @@ class Parser(sly.Parser):
 
     tokens = Lexer.tokens
 
-    @_("exprs")
-    def exprs(self, p):
-        return BlockNode(p.exprs, p.expr1)
-
     @_("expr1 LINE_TERM exprs")
     def exprs(self, p):
         return BlockNode(p.expr1, p.exprs)
@@ -52,6 +48,11 @@ class Parser(sly.Parser):
         return ForExpression(p.IDENT, p.expr10, p.expr11, p.exprs)
 
     @_("LPAREN exprs IF cmp1 ELSE exprs RPAREN")
+    def expr2(self, p):
+        """If-else expression"""
+        return IfExpression(p[1], p.cmp1, p[-2])
+
+    @_("LPAREN expr1 IF cmp1 ELSE expr1 RPAREN")
     def expr2(self, p):
         """If-else expression"""
         return IfExpression(p[1], p.cmp1, p[-2])

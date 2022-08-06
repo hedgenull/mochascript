@@ -1,7 +1,5 @@
 a = 10;
 
 for i = 0 to a (
-    say i;
+    say i
 );
-
-say "Cahoots!";

@@ -299,10 +299,10 @@ class ForExpression(SpecialExpression):
         Assignment(self.iname, self.ival).visit()
 
     def visit(self):
-        if ENV[-1][self.iname] != self.toval:
+        while ENV[-1][self.iname] != self.toval:
             self.ival += 1
             Assignment(self.iname, self.ival).visit()
-            self.visit()
+            self.block.visit()
 
         return self.block.visit()
 

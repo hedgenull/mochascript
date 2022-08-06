@@ -5,8 +5,6 @@ from obj_model import *
 
 
 class Parser(sly.Parser):
-    debugfile = "parser.debug"
-
     tokens = Lexer.tokens
 
     @_("expr1 LINE_TERM exprs")
@@ -43,6 +41,11 @@ class Parser(sly.Parser):
         return SayNode(p.expr1)
 
     @_("FOR IDENT EQ expr1 TO expr1 LPAREN exprs RPAREN")
+    def expr2(self, p):
+        """For-to loop"""
+        return ForExpression(p.IDENT, p.expr10, p.expr11, p.exprs)
+
+    @_("FOR IDENT EQ expr1 TO expr1 LPAREN expr1 RPAREN")
     def expr2(self, p):
         """For-to loop"""
         return ForExpression(p.IDENT, p.expr10, p.expr11, p.exprs)

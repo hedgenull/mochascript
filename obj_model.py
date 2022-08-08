@@ -63,10 +63,10 @@ class BaseObject:
         return Boolean(self.visit().value != other.visit().value)
 
     def pos(self):
-        return self.visit().pos()
+        return +self.value
 
     def neg(self):
-        return self.visit().neg()
+        return -self.value
 
     def _and(self, other):
         return Boolean(Boolean(self.visit().value).value and Boolean(other.visit().value).value)

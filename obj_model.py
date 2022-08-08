@@ -137,11 +137,9 @@ class Number(Atom):
 
     def repr(self):
         return (
-            "0"
-            if self.value == 0
-            else str(self.value).strip(".0")
-            if self.value % 1 == 0
-            else str(self.value)
+            (str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value))
+            if self.value
+            else "0"
         )
 
 
@@ -319,6 +317,19 @@ class Assignment(SpecialExpression):
         return ENV[-1][self.name]
 
 
+class Variable(SpecialExpression):
+    """Variable manager for the language."""
+
+    def __init__(self, name):
+        self.name = name
+
+    def visit(self):
+        value = ENV[-1].get(self.name)
+        if not value:
+            abort(f"Undefined variable {self.name}")
+        return value
+
+
 class SayNode(SpecialExpression):
     """It says the expression."""
 
@@ -387,7 +398,9 @@ ENV = [
             # ...
             # Special constants:
             "CONST_true": Boolean(True),
+            "CONST_yes": Boolean(True),
             "CONST_false": Boolean(False),
+            "CONST_no": Boolean(False),
             "CONST_null": Null(),
         }
     ),

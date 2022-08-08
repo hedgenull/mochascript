@@ -168,10 +168,7 @@ class Parser(sly.Parser):
     @_("IDENT")
     def atom(self, p):
         """Variable reference"""
-        if val := ENV[-1].get(p.IDENT):
-            return val
-        else:
-            abort(f"Undefined variable {p.IDENT}")
+        return Variable(p.IDENT)
 
     @_("LPAREN expr1 RPAREN")
     def atom(self, p):
@@ -181,12 +178,12 @@ class Parser(sly.Parser):
     @_("MINUS expr1")
     def atom(self, p):
         """Negated expression"""
-        return UnOp("-", p.expr2)
+        return UnOp("-", p.expr1)
 
-    @_("PLUS expr2")
+    @_("PLUS expr1")
     def atom(self, p):
         """Negated expression"""
-        return UnOp("+", p.expr2)
+        return UnOp("+", p.expr1)
 
     @_("array")
     def atom(self, p):

@@ -1,7 +1,3 @@
-import re
-from calendar import c
-from random import randint
-
 from utils import *
 
 BINOP_TO_FUNC_MAP = {

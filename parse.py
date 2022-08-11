@@ -217,3 +217,11 @@ class Parser(sly.Parser):
     def list(self, p):
         """Comma-separated list"""
         return p.expr2
+
+    def error(self, p):
+        if p:
+            print(f"Syntax error at token {p.type}")
+            # Just discard the token and tell the parser it's okay.
+            self.errok()
+        else:
+            print("Syntax error: End of file")

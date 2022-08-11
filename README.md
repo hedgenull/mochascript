@@ -15,7 +15,3 @@ my_second_var = (10 if my_var == 20 else 5);
 
 say my_second_var;
 ```
-
-# Issues:
-
-- So far, for-loops exist but don't work. Oops.

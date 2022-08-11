@@ -177,8 +177,8 @@ class String(Atom):
 class Array(Atom):
     """Array/list class for the language."""
 
-    def __init__(self, values):
-        self.values = [value.visit() for value in values]
+    def __init__(self, values=None):
+        self.values = [] or [value.visit() for value in values]
 
     def add(self, other):
         if isinstance(other, Array):
@@ -284,25 +284,6 @@ class IfExpression(SpecialExpression):
             if self.condition.visit().value == True
             else self.false_block.visit()
         )
-
-
-class ForExpression(SpecialExpression):
-    """For-loop expression for the language."""
-
-    def __init__(self, iname, ival, toval, block):
-        self.iname = iname
-        self.ival = ival
-        self.toval = toval
-        self.block = block
-        Assignment(self.iname, self.ival).visit()
-
-    def visit(self):
-        while ENV[-1][self.iname] != self.toval:
-            self.ival += 1
-            Assignment(self.iname, self.ival).visit()
-            self.block.visit()
-
-        return self.block.visit()
 
 
 class Assignment(SpecialExpression):

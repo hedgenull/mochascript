@@ -40,16 +40,6 @@ class Parser(sly.Parser):
         """Say-expression"""
         return SayNode(p.expr1)
 
-    @_("FOR IDENT EQ expr1 TO expr1 LPAREN exprs RPAREN")
-    def expr2(self, p):
-        """For-to loop"""
-        return ForExpression(p.IDENT, p.expr10, p.expr11, p.exprs)
-
-    @_("FOR IDENT EQ expr1 TO expr1 LPAREN expr1 RPAREN")
-    def expr2(self, p):
-        """For-to loop"""
-        return ForExpression(p.IDENT, p.expr10, p.expr11, p.exprs)
-
     @_("LPAREN exprs IF cmp1 ELSE exprs RPAREN")
     def expr2(self, p):
         """If-else expression"""
@@ -194,6 +184,11 @@ class Parser(sly.Parser):
     def array(self, p):
         """Array"""
         return Array(p.list)
+
+    @_("LBRACK RBRACK")
+    def array(self, p):
+        """Empty array"""
+        return Array()
 
     @_("expr2 COMMA list")
     def list(self, p):

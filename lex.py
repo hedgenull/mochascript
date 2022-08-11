@@ -71,4 +71,3 @@ class Lexer(sly.Lexer):
     IDENT["ask"] = ASK
     IDENT["exit"] = EXIT
     IDENT["for"] = FOR
-    IDENT["to"] = TO

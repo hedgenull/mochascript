@@ -10,6 +10,8 @@ class Lexer(sly.Lexer):
         RPAREN,
         LBRACK,
         RBRACK,
+        LBRACE,
+        RBRACE,
         COMMA,
         EQEQ,
         NTEQ,
@@ -32,8 +34,7 @@ class Lexer(sly.Lexer):
         SAY,
         ASK,
         EXIT,
-        FOR,
-        TO,
+        WHILE,
     }
 
     ignore = " \t\n"
@@ -46,6 +47,8 @@ class Lexer(sly.Lexer):
     RPAREN = r"\)"
     LBRACK = r"\["
     RBRACK = r"\]"
+    LBRACE = r"\{"
+    RBRACE = r"\}"
     COMMA = r","
     EQEQ = r"=="
     NTEQ = r"!="
@@ -61,7 +64,7 @@ class Lexer(sly.Lexer):
     MUL = r"\*"
     DIV = r"\/"
     MOD = r"\%"
-    ARROW = r"=>"
+    ARROW = r"->"
     LINE_TERM = ";"
 
     # Special keywords
@@ -70,4 +73,4 @@ class Lexer(sly.Lexer):
     IDENT["say"] = SAY
     IDENT["ask"] = ASK
     IDENT["exit"] = EXIT
-    IDENT["for"] = FOR
+    IDENT["while"] = WHILE

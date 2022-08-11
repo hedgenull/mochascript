@@ -143,12 +143,58 @@ class Number(Atom):
         )
 
 
-class String(Atom):
+class Array(Atom):
+    """Array/list class for the language."""
+
+    def __init__(self, values=None):
+        self.value = [] or [value.visit() for value in values]
+
+    def add(self, other):
+        if isinstance(other, Array):
+            return Array(self.value.extend(other.value))
+        elif isinstance(other, Atom):
+            return Array(self.value + [other.visit()])
+        elif isinstance(other, SpecialExpression):
+            return self.add(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def sub(self, other):
+        if isinstance(other, Atom):
+            copy = self.value[:]
+            while other in copy:
+                copy.remove(other)
+            return Array(copy)
+        elif isinstance(other, SpecialExpression):
+            return self.sub(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def mul(self, other):
+        if isinstance(other, Number):
+            return Array(self.value * other.value)
+        elif isinstance(other, SpecialExpression):
+            return self.mul(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def div(self, other):
+        if isinstance(other, Number):
+            return self.value[int(other.value)]
+        elif isinstance(other, SpecialExpression):
+            return self.div(other.visit())
+        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def neg(self):
+        return Array(self.value[::-1])
+
+    def repr(self):
+        return f"[{', '.join((value.repr() for value in self.value))}]"
+
+
+class String(Array):
     """String class for the language."""
 
     def __init__(self, value=""):
         self.value = (
-            str(value).strip("\"'").replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
+            str(value).strip('"').replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
         )
 
     def add(self, other):
@@ -168,56 +214,26 @@ class String(Atom):
             return self.mul(int(other.visit()))
         abort(f"Invalid types for operation: String and {type(other).__name__}")
 
+    def div(self, other):
+        if isinstance(other, Number):
+            return self.value[int(other.value)]
+        elif isinstance(other, SpecialExpression):
+            return self.div(other.visit())
+        abort(f"Invalid types for operation: String and {type(other).__name__}")
+
     def mod(self, other):
         if isinstance(other, SpecialExpression):
             return self.mod(other.visit())
         return String(self.value.replace("{}", other.repr()))
 
-
-class Array(Atom):
-    """Array/list class for the language."""
-
-    def __init__(self, values=None):
-        self.values = [] or [value.visit() for value in values]
-
-    def add(self, other):
-        if isinstance(other, Array):
-            return Array(self.values.extend(other.values))
-        elif isinstance(other, Atom):
-            return Array(self.values + [other.visit()])
-        elif isinstance(other, SpecialExpression):
-            return self.add(other.visit())
-        abort(f"Invalid types for operation: Array and {type(other).__name__}")
-
-    def sub(self, other):
-        if isinstance(other, Atom):
-            copy = self.values[:]
-            while other in copy:
-                copy.remove(other)
-            return Array(copy)
-        elif isinstance(other, SpecialExpression):
-            return self.sub(other.visit())
-        abort(f"Invalid types for operation: Array and {type(other).__name__}")
-
-    def mul(self, other):
-        if isinstance(other, Number):
-            return Array(self.values * other.value)
-        elif isinstance(other, SpecialExpression):
-            return self.mul(other.visit())
-        abort(f"Invalid types for operation: Array and {type(other).__name__}")
-
-    def mod(self, other):
-        if isinstance(other, Number):
-            return self.values[int(other.value)]
-        elif isinstance(other, SpecialExpression):
-            return self.mod(other.visit())
-        abort(f"Invalid types for operation: Array and {type(other).__name__}")
+    def pos(self):
+        return String(self.value.upper())
 
     def neg(self):
-        return Array(self.values[::-1])
+        return String(self.value.lower())
 
     def repr(self):
-        return f"[{', '.join((value.repr() for value in self.values))}]"
+        return self.value
 
 
 class Boolean(Atom):
@@ -270,7 +286,7 @@ class UnOp(SpecialExpression):
         return eval(f"self.value.{UNOP_TO_FUNC_MAP[self.op]}()")
 
 
-class IfExpression(SpecialExpression):
+class IfNode(SpecialExpression):
     """If-expression class for the language."""
 
     def __init__(self, condition, true_block, false_block):
@@ -280,10 +296,23 @@ class IfExpression(SpecialExpression):
 
     def visit(self):
         return (
-            self.true_block.visit()
-            if self.condition.visit().value == True
-            else self.false_block.visit()
+            self.true_block.visit() if self.condition.visit().value else self.false_block.visit()
         )
+
+
+class WhileNode(SpecialExpression):
+    """While-expression class for the language."""
+
+    def __init__(self, condition, block):
+        self.condition = condition
+        self.block = block
+
+    def visit(self):
+        res = Null()
+        while self.condition.visit().value:
+            res = self.block.visit()
+
+        return res
 
 
 class Assignment(SpecialExpression):

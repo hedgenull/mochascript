@@ -43,12 +43,22 @@ class Parser(sly.Parser):
     @_("LPAREN exprs IF cmp1 ELSE exprs RPAREN")
     def expr2(self, p):
         """If-else expression"""
-        return IfExpression(p[1], p.cmp1, p[-2])
+        return IfNode(p[1], p.cmp1, p[-2])
 
     @_("LPAREN expr1 IF cmp1 ELSE expr1 RPAREN")
     def expr2(self, p):
         """If-else expression"""
-        return IfExpression(p[1], p.cmp1, p[-2])
+        return IfNode(p[1], p.cmp1, p[-2])
+
+    @_("LPAREN exprs WHILE cmp1 LPAREN")
+    def expr2(self, p):
+        """While loop"""
+        return WhileNode(p.cmp1, p.exprs)
+
+    @_("LPAREN expr1 WHILE cmp1 LPAREN")
+    def expr2(self, p):
+        """While loop"""
+        return WhileNode(p.cmp1, p.expr1)
 
     @_("expr1 PLUS cmp1")
     def expr2(self, p):

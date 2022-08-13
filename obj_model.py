@@ -133,7 +133,7 @@ class Number(Atom):
 
     def repr(self):
         return (
-            (str(self.value).strip(".0") if self.value % 1 == 0 else str(self.value))
+            (str(self.value)[:-2] if self.value % 1 == 0 else str(self.value))
             if self.value
             else "0"
         )

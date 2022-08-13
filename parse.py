@@ -7,153 +7,164 @@ from obj_model import *
 class Parser(sly.Parser):
     tokens = Lexer.tokens
 
-    @_("expr1 LINE_TERM exprs")
-    def exprs(self, p):
-        return BlockNode(p.expr1, p.exprs)
+    @_("expr LINE_TERM program")
+    def program(self, p):
+        return BlockNode(p.expr, p.program)
 
-    @_("expr1 LINE_TERM")
-    def exprs(self, p):
-        return p.expr1
+    @_("expr LINE_TERM")
+    def program(self, p):
+        return p.expr
 
-    @_("IDENT EQ expr1")
-    def expr1(self, p):
+    @_("IDENT EQ expr")
+    def expr(self, p):
         """Assignment expression"""
-        return Assignment(p.IDENT, p.expr1)
+        return Assignment(p.IDENT, p.expr)
 
-    @_("expr2")
-    def expr1(self, p):
-        """Expression"""
-        return p.expr2
+    @_("EXIT")
+    def expr(self, p):
+        """Exit-expression"""
+        return ExitNode()
 
-    @_("EXIT expr1")
-    def expr2(self, p):
-        """Exit the program"""
-        return ExitNode(p.expr1)
+    @_("EXIT expr")
+    def expr(self, p):
+        """Exit-expression"""
+        return ExitNode(p.expr)
 
-    @_("ASK expr1")
-    def expr2(self, p):
+    @_("ASK expr")
+    def expr(self, p):
         """Ask-expression"""
-        return AskNode(p.expr1)
+        return AskNode(p.expr)
 
-    @_("SAY expr1")
-    def expr2(self, p):
+    @_("SAY expr")
+    def expr(self, p):
         """Say-expression"""
-        return SayNode(p.expr1)
+        return SayNode(p.expr)
 
-    @_("LPAREN exprs IF cmp1 ELSE exprs RPAREN")
-    def expr2(self, p):
-        """If-else expression"""
-        return IfNode(p[1], p.cmp1, p[-2])
+    @_("LPAREN expr IF or_expr ELSE expr RPAREN")
+    def expr(self, p):
+        """If-expression"""
+        return IfNode(p.expr0, p.or_expr, p.expr1)
 
-    @_("LPAREN expr1 IF cmp1 ELSE expr1 RPAREN")
-    def expr2(self, p):
-        """If-else expression"""
-        return IfNode(p[1], p.cmp1, p[-2])
 
-    @_("LPAREN exprs WHILE cmp1 LPAREN")
-    def expr2(self, p):
-        """While loop"""
-        return WhileNode(p.cmp1, p.exprs)
+    @_("LPAREN expr WHILE or_expr LPAREN")
+    def expr(self, p):
+        """While-expression"""
+        return WhileNode(p.or_expr0, p.or_expr1)
 
-    @_("LPAREN expr1 WHILE cmp1 LPAREN")
-    def expr2(self, p):
-        """While loop"""
-        return WhileNode(p.cmp1, p.expr1)
+    @_("or_expr")
+    def expr(self, p):
+        """Or-expression"""
+        return p.or_expr
 
-    @_("expr1 PLUS cmp1")
-    def expr2(self, p):
-        """Addition"""
-        return BinOp("+", p.expr1, p.cmp1)
+    @_("and_expr OR and_expr")
+    def or_expr(self, p):
+        """Or-expression"""
+        return BinOp("||", p.and_expr0, p.and_expr1)
 
-    @_("expr1 MINUS cmp1")
-    def expr2(self, p):
-        """Subtraction"""
-        return BinOp("-", p.expr1, p.cmp1)
+    @_("and_expr")
+    def or_expr(self, p):
+        """And-expression"""
+        return p.and_expr
 
-    @_("cmp1")
-    def expr2(self, p):
-        """Component-1"""
-        return p.cmp1
+    @_("equals_expr AND equals_expr")
+    def and_expr(self, p):
+        """And-expression"""
+        return BinOp("&&", p.equals_expr0, p.equals_expr1)
 
-    @_("cmp1 AND term")
-    def cmp1(self, p):
-        """And"""
-        return BinOp("&&", p.cmp1, p.term)
+    @_("equals_expr")
+    def and_expr(self, p):
+        """Equals or not-equals expression"""
+        return p.equals_expr
 
-    @_("cmp1 OR term")
-    def cmp1(self, p):
-        """Or"""
-        return BinOp("||", p.cmp1, p.term)
+    @_("comp_expr EQEQ comp_expr")
+    def equals_expr(self, p):
+        """Equals-expression"""
+        return BinOp("==", p.comp_expr0, p.comp_expr1)
 
-    @_("term")
-    def cmp1(self, p):
-        """Term"""
-        return p.term
+    @_("comp_expr NTEQ comp_expr")
+    def equals_expr(self, p):
+        """Not-equals expression"""
+        return BinOp("!=", p.comp_expr0, p.comp_expr1)
 
-    @_("term MUL factor")
-    def term(self, p):
-        """Multiplication"""
-        return BinOp("*", p.term, p.factor)
+    @_("comp_expr")
+    def equals_expr(self, p):
+        """Comparison expression"""
+        return p.comp_expr
 
-    @_("term DIV factor")
-    def term(self, p):
-        """Division"""
-        return BinOp("/", p.term, p.factor)
+    @_("plus_expr LT plus_expr")
+    def comp_expr(self, p):
+        """Less-than expression"""
+        return BinOp("<", p.plus_expr0, p.plus_expr1)
 
-    @_("term MOD factor")
-    def term(self, p):
-        """Modulus"""
-        return BinOp("%", p.term, p.factor)
+    @_("plus_expr GT plus_expr")
+    def comp_expr(self, p):
+        """Greater-than expression"""
+        return BinOp(">", p.plus_expr0, p.plus_expr1)
 
-    @_("factor")
-    def term(self, p):
-        """Factor"""
-        return p.factor
+    @_("plus_expr LTEQ plus_expr")
+    def comp_expr(self, p):
+        """Less-than expression"""
+        return BinOp("<=", p.plus_expr0, p.plus_expr1)
 
-    @_("factor EQEQ cmp2")
-    def factor(self, p):
-        """Equal to"""
-        return BinOp("==", p.factor, p.cmp2)
+    @_("plus_expr GTEQ plus_expr")
+    def comp_expr(self, p):
+        """Greater-than expression"""
+        return BinOp(">=", p.plus_expr0, p.plus_expr1)
 
-    @_("factor NTEQ cmp2")
-    def factor(self, p):
-        """Not equal to"""
-        return BinOp("!=", p.factor, p.cmp2)
+    @_("plus_expr")
+    def comp_expr(self, p):
+        """Addition or subtraction expression"""
+        return p.plus_expr
 
-    @_("cmp2")
-    def factor(self, p):
-        """Component-2"""
-        return p.cmp2
+    @_("mul_expr PLUS mul_expr")
+    def plus_expr(self, p):
+        """Addition expression"""
+        return BinOp("+", p.mul_expr0, p.mul_expr1)
 
-    @_("cmp2 LT atom")
-    def cmp2(self, p):
-        """Less than"""
-        return BinOp("<", p.cmp2, p.atom)
+    @_("mul_expr MINUS mul_expr")
+    def plus_expr(self, p):
+        """Subtraction expression"""
+        return BinOp("-", p.mul_expr0, p.mul_expr1)
 
-    @_("cmp2 GT atom")
-    def cmp2(self, p):
-        """Greater than"""
-        return BinOp(">", p.cmp2, p.atom)
+    @_("mul_expr")
+    def plus_expr(self, p):
+        """Multiplication, division, or modulus expression"""
+        return p.mul_expr
 
-    @_("cmp3")
-    def cmp2(self, p):
-        """Component-3"""
-        return p.cmp3
+    @_("atom MUL atom")
+    def mul_expr(self, p):
+        """Multiplication expression"""
+        return BinOp("*", p.atom0, p.atom1)
 
-    @_("cmp3 LTEQ atom")
-    def cmp3(self, p):
-        """Less than or equal to"""
-        return BinOp("<=", p.cmp3, p.atom)
+    @_("atom DIV atom")
+    def mul_expr(self, p):
+        """Division expression"""
+        return BinOp("/", p.atom0, p.atom1)
 
-    @_("cmp3 GTEQ atom")
-    def cmp3(self, p):
-        """Greater than or equal to"""
-        return BinOp(">=", p.cmp3, p.atom)
+    @_("atom MOD atom")
+    def mul_expr(self, p):
+        """Modulus expression"""
+        return BinOp("%", p.atom0, p.atom1)
 
     @_("atom")
-    def cmp3(self, p):
-        """Atom"""
+    def mul_expr(self, p):
+        """Atomic expression"""
         return p.atom
+
+    @_("MINUS atom")
+    def atom(self, p):
+        """Negated atom"""
+        return UnOp("-", p.atom)
+
+    @_("PLUS atom")
+    def atom(self, p):
+        """Positive atom"""
+        return UnOp("+", p.atom)
+
+    @_("LPAREN program RPAREN")
+    def atom(self, p):
+        """Parenthesized expressions"""
+        return p.program
 
     @_("NUMBER")
     def atom(self, p):
@@ -167,61 +178,41 @@ class Parser(sly.Parser):
 
     @_("IDENT")
     def atom(self, p):
-        """Variable reference"""
-        return Variable(p.IDENT)
-
-    @_("LPAREN expr1 RPAREN")
-    def atom(self, p):
-        """Parenthesized expression"""
-        return p.expr1
-
-    @_("MINUS expr1")
-    def atom(self, p):
-        """Negated expression"""
-        return UnOp("-", p.expr1)
-
-    @_("PLUS expr1")
-    def atom(self, p):
-        """Negated expression"""
-        return UnOp("+", p.expr1)
+        """Variable or constant reference"""
+        return Reference(p.IDENT)
 
     @_("array")
     def atom(self, p):
         """Array"""
         return p.array
 
-    @_("LBRACK list RBRACK")
+    @_("LBRACK comma_sep RBRACK")
     def array(self, p):
         """Array"""
-        return Array(p.list)
+        if isinstance(p.comma_sep, Atom):
+            return Array([p.comma_sep])
+        return Array(p.comma_sep)
 
     @_("LBRACK RBRACK")
     def array(self, p):
         """Empty array"""
         return Array()
 
-    @_("expr2 COMMA list")
-    def list(self, p):
+    @_("expr COMMA comma_sep")
+    def comma_sep(self, p):
         """Comma-separated list"""
-        if isinstance(p.list, tuple):
-            return p.expr2, *p.list
+        if isinstance(p.comma_sep, tuple):
+            return p.expr, *p.comma_sep
         else:
-            return p.expr2, p.list
+            return p.expr, p.comma_sep
 
-    @_("expr2 COMMA")
-    def list(self, p):
+    @_("expr COMMA")
+    def comma_sep(self, p):
         """Comma-separated list"""
         return p.expr
 
-    @_("expr2")
-    def list(self, p):
+    @_("expr")
+    def comma_sep(self, p):
         """Comma-separated list"""
-        return p.expr2
+        return p.expr
 
-    def error(self, p):
-        if p:
-            print(f"Syntax error at token {p.type}")
-            # Just discard the token and tell the parser it's okay.
-            self.errok()
-        else:
-            print("Syntax error: End of file")

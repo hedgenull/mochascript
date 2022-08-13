@@ -143,7 +143,9 @@ class Array(Atom):
     """Array/list class for the language."""
 
     def __init__(self, values=None):
-        self.value = [] or [value.visit() for value in values]
+        if values is None:
+            values = []
+        self.value = [value.visit() for value in values]
 
     def add(self, other):
         if isinstance(other, Array):
@@ -242,16 +244,6 @@ class Boolean(Atom):
         return str(self.value).lower()
 
 
-class Null(Atom):
-    """Null, None, void, nil, whatever you want to call it."""
-
-    def __init__(self):
-        self.value = None
-
-    def repr(self):
-        return "null"
-
-
 class SpecialExpression(BaseObject):
     pass
 
@@ -304,7 +296,7 @@ class WhileNode(SpecialExpression):
         self.block = block
 
     def visit(self):
-        res = Null()
+        res = Boolean(False)
         while self.condition.visit().value:
             res = self.block.visit()
 
@@ -323,8 +315,8 @@ class Assignment(SpecialExpression):
         return ENV[-1][self.name]
 
 
-class Variable(SpecialExpression):
-    """Variable manager for the language."""
+class Reference(SpecialExpression):
+    """Variable/constant manager for the language."""
 
     def __init__(self, name):
         self.name = name
@@ -400,14 +392,11 @@ class Env(dict):
 ENV = [
     Env(
         **{
-            # Built-in functions:
-            # ...
             # Special constants:
             "CONST_true": Boolean(True),
             "CONST_yes": Boolean(True),
             "CONST_false": Boolean(False),
             "CONST_no": Boolean(False),
-            "CONST_null": Null(),
         }
     ),
 ]

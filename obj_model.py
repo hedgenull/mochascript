@@ -23,7 +23,7 @@ UNOP_TO_FUNC_MAP = {
 
 
 class BaseObject:
-    """Base class for all objects in the language."""
+    """Base class for all objects in MochaScript."""
 
     def add(self, other):
         return self.visit().add(other.visit())
@@ -79,13 +79,20 @@ class BaseObject:
     def type(self):
         return self.__class__.__name__
 
+    def __repr__(self):
+        return (
+            self.__class__.__name__
+            + " "
+            + str({k: v for k, v in self.__dict__.items() if not k.startswith("__")})
+        )
+
 
 class Atom(BaseObject):
     """Base class for all atoms- i.e. objects that have a "value" attribute"""
 
 
 class Number(Atom):
-    """Number class for the language."""
+    """Number class for MochaScript."""
 
     def __init__(self, value):
         self.value = float(value)
@@ -140,7 +147,7 @@ class Number(Atom):
 
 
 class Array(Atom):
-    """Array/list class for the language."""
+    """Array/list class for MochaScript."""
 
     def __init__(self, values=None):
         if values is None:
@@ -188,7 +195,7 @@ class Array(Atom):
 
 
 class String(Array):
-    """String class for the language."""
+    """String class for MochaScript."""
 
     def __init__(self, value=""):
         self.value = (
@@ -235,7 +242,7 @@ class String(Array):
 
 
 class Boolean(Atom):
-    """Boolean class for the language."""
+    """Boolean class for MochaScript."""
 
     def __init__(self, value=True):
         self.value = bool(value)
@@ -249,7 +256,7 @@ class SpecialExpression(BaseObject):
 
 
 class BinOp(SpecialExpression):
-    """Binary operation class for the language."""
+    """Binary operation class for MochaScript."""
 
     def __init__(self, op, right, left):
         self.op = op
@@ -264,7 +271,7 @@ class BinOp(SpecialExpression):
 
 
 class UnOp(SpecialExpression):
-    """Unary operation class for the language."""
+    """Unary operation class for MochaScript."""
 
     def __init__(self, op, value):
         self.op = op
@@ -275,7 +282,7 @@ class UnOp(SpecialExpression):
 
 
 class IfNode(SpecialExpression):
-    """If-expression class for the language."""
+    """If-expression class for MochaScript."""
 
     def __init__(self, condition, true_block, false_block):
         self.condition = condition
@@ -289,7 +296,7 @@ class IfNode(SpecialExpression):
 
 
 class WhileNode(SpecialExpression):
-    """While-expression class for the language."""
+    """While-expression class for MochaScript."""
 
     def __init__(self, condition, block):
         self.condition = condition
@@ -304,7 +311,7 @@ class WhileNode(SpecialExpression):
 
 
 class Assignment(SpecialExpression):
-    """Assignment manager for the language."""
+    """Assignment manager for MochaScript."""
 
     def __init__(self, name, value):
         self.name = name
@@ -316,7 +323,7 @@ class Assignment(SpecialExpression):
 
 
 class Reference(SpecialExpression):
-    """Variable/constant manager for the language."""
+    """Variable/constant manager for MochaScript."""
 
     def __init__(self, name):
         self.name = name

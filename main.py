@@ -21,6 +21,8 @@ def shell(lexer: Lexer, parser: Parser):
         except AttributeError:
             print("Syntax error!")
         else:
+            # Uncomment this line if you want to print the AST details
+            # print(ast)
             print(result.repr())
 
 

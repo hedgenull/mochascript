@@ -45,7 +45,6 @@ class Parser(sly.Parser):
         """If-expression"""
         return IfNode(p.expr0, p.or_expr, p.expr1)
 
-
     @_("LPAREN expr WHILE or_expr LPAREN")
     def expr(self, p):
         """While-expression"""
@@ -163,8 +162,13 @@ class Parser(sly.Parser):
 
     @_("LPAREN program RPAREN")
     def atom(self, p):
-        """Parenthesized expressions"""
+        """Parenthesized block"""
         return p.program
+
+    @_("LPAREN expr RPAREN")
+    def atom(self, p):
+        """Parenthesized expression"""
+        return p.expr
 
     @_("NUMBER")
     def atom(self, p):
@@ -215,4 +219,3 @@ class Parser(sly.Parser):
     def comma_sep(self, p):
         """Comma-separated list"""
         return p.expr
-

@@ -43,12 +43,16 @@ class Parser(sly.Parser):
     @_("or_expr LPAREN comma_sep RPAREN")
     def expr(self, p):
         """Function call, with arguments"""
-        return CallNode(p.expr, p.comma_sep)
+        return (
+            CallNode(p.or_expr, p.comma_sep)
+            if isinstance(p.comma_sep, tuple)
+            else CallNode(p.or_expr, [p.comma_sep])
+        )
 
     @_("or_expr LPAREN RPAREN")
     def expr(self, p):
-        """Function call, with arguments"""
-        return CallNode(p.expr, p.comma_sep)
+        """Function call, without arguments"""
+        return CallNode(p.or_expr, [])
 
     @_("LPAREN expr IF or_expr ELSE expr RPAREN")
     def expr(self, p):
@@ -200,15 +204,19 @@ class Parser(sly.Parser):
         """Array"""
         return p.array
 
-    @_("FN LPAREN func_params RPAREN ARROW LBRACE expr RBRACE")
+    @_("FN LPAREN func_params RPAREN ARROW LPAREN expr RPAREN")
     def atom(self, p):
         """Function definition"""
-        return Function(p.expr, list(p.func_params)) if isinstance(p.func_params, tuple) else Function(p.expr, [p.func_params])
+        return (
+            Function(p.expr, list(p.func_params))
+            if isinstance(p.func_params, tuple)
+            else Function(p.expr, [p.func_params])
+        )
 
-    @_("FN LPAREN RPAREN ARROW LBRACE expr RBRACE")
+    @_("FN LPAREN RPAREN ARROW LPAREN expr RPAREN")
     def atom(self, p):
         """Function definition"""
-        return Function([], p.expr)
+        return Function(p.expr, [])
 
     @_("IDENT COMMA func_params")
     def func_params(self, p):

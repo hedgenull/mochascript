@@ -251,6 +251,27 @@ class Boolean(Atom):
         return str(self.value).lower()
 
 
+class Function(Atom):
+    """Function class for MochaScript."""
+
+    def __init__(self, body, parameters):
+        self.body = body
+        self.parameters = parameters
+
+    def repr(self):
+        return "<function object>"
+
+    def call(self, arguments):
+        """Call a function with arguments"""
+        # Append the passed arguments to the environment
+        ENV.append(Env({**ENV[-1], **arguments}))
+        # Get the result of the function
+        result = self.body.visit()
+        # Remove the arguments from the environment
+        ENV.pop()
+        return result
+
+
 class SpecialExpression(BaseObject):
     pass
 
@@ -310,31 +331,6 @@ class WhileNode(SpecialExpression):
         return res
 
 
-class Assignment(SpecialExpression):
-    """Assignment manager for MochaScript."""
-
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-    def visit(self):
-        ENV[-1][self.name] = self.value.visit()
-        return ENV[-1][self.name]
-
-
-class Reference(SpecialExpression):
-    """Variable/constant manager for MochaScript."""
-
-    def __init__(self, name):
-        self.name = name
-
-    def visit(self):
-        value = ENV[-1].get(self.name)
-        if not value:
-            abort(f"Undefined variable {self.name}")
-        return value
-
-
 class SayNode(SpecialExpression):
     """It says the expression."""
 
@@ -375,6 +371,49 @@ class BlockNode(SpecialExpression):
 
     def visit(self):
         return [expr.visit() for expr in self.exprs][-1]
+
+
+class CallNode(SpecialExpression):
+    """Calls a function."""
+
+    def __init__(self, function, arguments):
+        self.function = function
+        self.arguments = arguments
+
+    def visit(self):
+        # Make sure the expression is fully reduced into a function.
+        self.function = self.function.visit()
+        self.arguments = dict(zip(self.function.parameters, self.arguments))
+        try:
+            result = self.function.call(self.arguments)
+        except AttributeError:
+            abort(f"{self.function.repr()} is not a callable object!")
+        return result
+
+
+class Assignment(SpecialExpression):
+    """Assignment manager for MochaScript."""
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def visit(self):
+        ENV[-1][self.name] = self.value.visit()
+        return ENV[-1][self.name]
+
+
+class Reference(SpecialExpression):
+    """Variable/constant manager for MochaScript."""
+
+    def __init__(self, name):
+        self.name = name
+
+    def visit(self):
+        value = ENV[-1].get(self.name)
+        if not value:
+            abort(f"Undefined variable {self.name}")
+        return value
 
 
 class Env(dict):

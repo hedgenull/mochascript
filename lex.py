@@ -35,6 +35,7 @@ class Lexer(sly.Lexer):
         ASK,
         EXIT,
         WHILE,
+        FN,
     }
 
     ignore = " \t\n"
@@ -50,6 +51,7 @@ class Lexer(sly.Lexer):
     LBRACE = r"\{"
     RBRACE = r"\}"
     COMMA = r","
+    ARROW = r"=>"
     EQEQ = r"=="
     NTEQ = r"!="
     LTEQ = r"<="
@@ -64,7 +66,6 @@ class Lexer(sly.Lexer):
     MUL = r"\*"
     DIV = r"\/"
     MOD = r"\%"
-    ARROW = r"->"
     LINE_TERM = ";"
 
     # Special keywords
@@ -74,3 +75,4 @@ class Lexer(sly.Lexer):
     IDENT["ask"] = ASK
     IDENT["exit"] = EXIT
     IDENT["while"] = WHILE
+    IDENT["fn"] = FN

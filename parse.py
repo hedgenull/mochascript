@@ -40,6 +40,16 @@ class Parser(sly.Parser):
         """Say-expression"""
         return SayNode(p.expr)
 
+    @_("or_expr LPAREN comma_sep RPAREN")
+    def expr(self, p):
+        """Function call, with arguments"""
+        return CallNode(p.expr, p.comma_sep)
+
+    @_("or_expr LPAREN RPAREN")
+    def expr(self, p):
+        """Function call, with arguments"""
+        return CallNode(p.expr, p.comma_sep)
+
     @_("LPAREN expr IF or_expr ELSE expr RPAREN")
     def expr(self, p):
         """If-expression"""
@@ -189,6 +199,37 @@ class Parser(sly.Parser):
     def atom(self, p):
         """Array"""
         return p.array
+
+    @_("FN LPAREN func_params RPAREN ARROW LBRACE expr RBRACE")
+    def atom(self, p):
+        """Function definition"""
+        return Function(p.expr, list(p.func_params)) if isinstance(p.func_params, tuple) else Function(p.expr, [p.func_params])
+
+    @_("FN LPAREN RPAREN ARROW LBRACE expr RBRACE")
+    def atom(self, p):
+        """Function definition"""
+        return Function([], p.expr)
+
+    @_("IDENT COMMA func_params")
+    def func_params(self, p):
+        """Function parameters"""
+        if isinstance(p.func_params, tuple):
+            return p.IDENT, *p.func_params
+        else:
+            return p.IDENT, p.func_params
+
+    @_("IDENT COMMA")
+    def func_params(self, p):
+        """Function parameters"""
+        if isinstance(p.func_params, tuple):
+            return p.IDENT, *p.func_params
+        else:
+            return p.IDENT, p.func_params
+
+    @_("IDENT")
+    def func_params(self, p):
+        """Function parameters"""
+        return Assignment(p.IDENT, Boolean(False))
 
     @_("LBRACK comma_sep RBRACK")
     def array(self, p):

@@ -1,16 +1,13 @@
-### Functions
+### Objects/structures? Dictionaries?
 
 ```py
-f = (x, y) => (x + y)
-a = f(1, 2) # 3
-```
+s = struct (x, y);
 
-### Objects/structures
+a = s(1, 2);
+say a.x; # 1
+say a.y; # 2
 
-```py
-s = struct (x, y)
+d = {"a": "A";, "b": "B", "c": "C"}
 
-a = s(1, 2)
-a.x # 1
-a.y # 2
+capital_A = d / "a" # "A"
 ```

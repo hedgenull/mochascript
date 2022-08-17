@@ -262,9 +262,12 @@ class Function(Atom):
         return "<function object>"
 
     def call(self, arguments):
-        """Call a function with arguments"""
+        """Call the function with arguments"""
         # Append the passed arguments to the environment
-        ENV.append(Env({**ENV[-1], **arguments}))
+        _assignments = [k.visit() for k in arguments.keys() if isinstance(k, Assignment)]
+        arguments = {k: v for k, v in arguments.items() if not isinstance(k, Assignment)}
+        updated_args = {**ENV[-1], **arguments}
+        ENV.append(Env(**updated_args))
         # Get the result of the function
         result = self.body.visit()
         # Remove the arguments from the environment
@@ -384,9 +387,9 @@ class CallNode(SpecialExpression):
         # Make sure the expression is fully reduced into a function.
         self.function = self.function.visit()
         self.arguments = dict(zip(self.function.parameters, self.arguments))
-        try:
+        if hasattr(self.function, "call"):
             result = self.function.call(self.arguments)
-        except AttributeError:
+        else:
             abort(f"{self.function.repr()} is not a callable object!")
         return result
 
@@ -420,9 +423,8 @@ class Env(dict):
     """Environment object. Used to store variables."""
 
     def __init__(self, **kwargs):
-        self.constants = []
-        for k, v in kwargs.items():
-            self[k] = v
+        self.consts = []
+        super().__init__(**kwargs)
 
     def __setitem__(self, key, value):
         if key in self.constants:

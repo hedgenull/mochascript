@@ -237,7 +237,7 @@ class Parser(sly.Parser):
     @_("IDENT")
     def func_params(self, p):
         """Function parameters"""
-        return Assignment(p.IDENT, Boolean(False))
+        return p.IDENT
 
     @_("LBRACK comma_sep RBRACK")
     def array(self, p):

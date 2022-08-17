@@ -274,6 +274,25 @@ class Function(Atom):
         ENV.pop()
         return result
 
+    add = lambda self, other: abort(
+        f"Invalid types for operation: Function and {type(other).__name__}"
+    )
+    sub = add
+    mul = add
+    div = add
+    mod = add
+    _or = add
+    _and = add
+    le = add
+    ge = add
+    lt = add
+    gt = add
+    eq = add
+    ne = add
+
+    pos = lambda self: abort(f"Invalid type for operation: Function")
+    neg = pos
+
 
 class SpecialExpression(BaseObject):
     pass
@@ -423,7 +442,7 @@ class Env(dict):
     """Environment object. Used to store variables."""
 
     def __init__(self, **kwargs):
-        self.consts = []
+        self.constants = []
         super().__init__(**kwargs)
 
     def __setitem__(self, key, value):

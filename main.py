@@ -16,13 +16,13 @@ def shell(lexer: Lexer, parser: Parser):
 
         tokens = lexer.tokenize(source)
         ast = parser.parse(tokens)
+        # Uncomment this line if you want to print the AST details
+        # print(ast)
         try:
             result = ast.visit()
         except AttributeError:
-            print("Syntax error!")
+            print("An unknown error occurred!")
         else:
-            # Uncomment this line if you want to print the AST details
-            # print(ast)
             print(result.repr())
 
 

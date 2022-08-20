@@ -20,8 +20,8 @@ def shell(lexer: Lexer, parser: Parser):
         # print(ast)
         try:
             result = ast.visit()
-        except AttributeError:
-            print("An unknown error occurred!")
+        except AttributeError as e:
+            print(f"Error: {e}")
         else:
             print(result.repr())
 

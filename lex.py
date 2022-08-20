@@ -48,8 +48,6 @@ class Lexer(sly.Lexer):
     RPAREN = r"\)"
     LBRACK = r"\["
     RBRACK = r"\]"
-    LBRACE = r"\{"
-    RBRACE = r"\}"
     COMMA = r","
     ARROW = r"->"
     EQEQ = r"=="

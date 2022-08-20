@@ -1,0 +1,9 @@
+# Functions and closures in MochaScript
+
+a = fn (x) -> (fn (y) -> (fn (z) -> (x + y * z)));
+
+b = a(1);
+c = b(2);
+d = c(3);
+
+say d; # 7

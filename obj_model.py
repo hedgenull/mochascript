@@ -254,9 +254,10 @@ class Boolean(Atom):
 class Function(Atom):
     """Function class for MochaScript."""
 
-    def __init__(self, body, parameters):
+    def __init__(self, body, parameters, closure_env=None):
         self.body = body
         self.parameters = parameters
+        self.closure_env = closure_env or {}
 
     def repr(self):
         return "<function object>"
@@ -266,10 +267,12 @@ class Function(Atom):
         # Append the passed arguments to the environment
         _assignments = [k.visit() for k in arguments.keys() if isinstance(k, Assignment)]
         arguments = {k: v for k, v in arguments.items() if not isinstance(k, Assignment)}
-        updated_args = {**ENV[-1], **arguments}
+        updated_args = {**ENV[-1], **self.closure_env, **arguments}
         ENV.append(Env(**updated_args))
         # Get the result of the function
         result = self.body.visit()
+        if isinstance(result, Function):
+            result.closure_env = ENV[-1]
         # Remove the arguments from the environment
         ENV.pop()
         return result

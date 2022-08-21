@@ -218,6 +218,20 @@ class Parser(sly.Parser):
         """Function definition"""
         return Function(p.expr, [])
 
+    @_("FN IDENT LPAREN func_params RPAREN ARROW LPAREN expr RPAREN")
+    def atom(self, p):
+        """Function definition"""
+        return (
+            Function(p.expr, list(p.func_params), name=p.IDENT)
+            if isinstance(p.func_params, tuple)
+            else Function(p.expr, [p.func_params], name=p.IDENT)
+        )
+
+    @_("FN IDENT LPAREN RPAREN ARROW LPAREN expr RPAREN")
+    def atom(self, p):
+        """Function definition"""
+        return Function(p.expr, [], name=p.IDENT)
+
     @_("IDENT COMMA func_params")
     def func_params(self, p):
         """Function parameters"""

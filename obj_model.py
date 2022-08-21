@@ -254,13 +254,14 @@ class Boolean(Atom):
 class Function(Atom):
     """Function class for MochaScript."""
 
-    def __init__(self, body, parameters, closure_env=None):
+    def __init__(self, body, parameters, closure_env=None, name=None):
         self.body = body
         self.parameters = parameters
         self.closure_env = closure_env or {}
+        self.name = name
 
     def repr(self):
-        return "<function object>"
+        return f"<function {self.name}>" if self.name else "<anonymous function object>"
 
     def call(self, arguments):
         """Call the function with arguments"""

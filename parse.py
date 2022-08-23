@@ -59,6 +59,11 @@ class Parser(sly.Parser):
         """If-expression"""
         return IfNode(p.expr0, p.or_expr, p.expr1)
 
+    @_("LPAREN or_expr FOR IDENT IN or_expr RPAREN")
+    def expr(self, p):
+        """For-loop expression"""
+        return ForNode(p.or_expr1, p.IDENT, p.or_expr0)
+
     @_("or_expr")
     def expr(self, p):
         """Or-expression"""
@@ -153,6 +158,11 @@ class Parser(sly.Parser):
     def mul_expr(self, p):
         """Modulus expression"""
         return BinOp("%", p.atom0, p.atom1)
+
+    @_("atom TO atom")
+    def mul_expr(self, p):
+        """Range definition"""
+        return RangeNode(p.atom0, p.atom1)
 
     @_("atom")
     def mul_expr(self, p):

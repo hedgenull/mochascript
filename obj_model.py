@@ -1,3 +1,5 @@
+from types import NoneType
+
 from utils import *
 
 BINOP_TO_FUNC_MAP = {
@@ -339,6 +341,52 @@ class IfNode(SpecialExpression):
     def visit(self):
         return (
             self.true_block.visit() if self.condition.visit().value else self.false_block.visit()
+        )
+
+
+class ForNode(SpecialExpression):
+    """For-to loop class for MochaScript."""
+
+    def __init__(self, iterator, var, body):
+        self.iterator = iterator
+        self.var = var
+        self.body = body
+
+    def visit(self):
+        self.iterator = self.iterator.visit()
+
+        if not isinstance(self.iterator, Array):
+            abort("For-loop can only accept an iterator")
+
+        self.start, self.end = 0, len(self.iterator.value) - 1
+
+        direction = -1 if self.end < self.start else 1
+
+        result = None
+        ENV.append(Env(**ENV[-1]))
+        ENV[-1][self.var] = Boolean(False)
+
+        while self.start != self.end + direction:
+            ENV[-1][self.var] = self.iterator.value[self.start]
+            result = self.body.visit()
+            self.start += direction
+
+        return result
+
+
+class RangeNode(SpecialExpression):
+    """Range class for MochaScript."""
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def visit(self):
+        return Array(
+            [
+                Number(n)
+                for n in range(int(self.start.visit().value), int(self.end.visit().value + 1))
+            ]
         )
 
 

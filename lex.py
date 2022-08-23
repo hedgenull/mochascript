@@ -72,5 +72,4 @@ class Lexer(sly.Lexer):
     IDENT["say"] = SAY
     IDENT["ask"] = ASK
     IDENT["exit"] = EXIT
-    IDENT["while"] = WHILE
     IDENT["fn"] = FN

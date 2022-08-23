@@ -342,21 +342,6 @@ class IfNode(SpecialExpression):
         )
 
 
-class WhileNode(SpecialExpression):
-    """While-expression class for MochaScript."""
-
-    def __init__(self, condition, block):
-        self.condition = condition
-        self.block = block
-
-    def visit(self):
-        res = Boolean(False)
-        while self.condition.visit().value:
-            res = self.block.visit()
-
-        return res
-
-
 class SayNode(SpecialExpression):
     """It says the expression."""
 

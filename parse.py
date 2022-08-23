@@ -59,11 +59,6 @@ class Parser(sly.Parser):
         """If-expression"""
         return IfNode(p.expr0, p.or_expr, p.expr1)
 
-    @_("LPAREN expr WHILE or_expr LPAREN")
-    def expr(self, p):
-        """While-expression"""
-        return WhileNode(p.or_expr0, p.or_expr1)
-
     @_("or_expr")
     def expr(self, p):
         """Or-expression"""

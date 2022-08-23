@@ -30,10 +30,9 @@ if __name__ == "__main__":
     lexer, parser = Lexer(), Parser()
     if len(sys.argv) >= 2:
         with open(sys.argv[1]) as source:
-            for line in source:
-                tokens = lexer.tokenize(line)
-                ast = parser.parse(tokens)
-                ast.visit()
+            tokens = lexer.tokenize(source.read())
+            ast = parser.parse(tokens)
+            ast.visit()
     else:
         print("Starting interactive MochaScript interpreter.")
         shell(lexer, parser)

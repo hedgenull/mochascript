@@ -1,0 +1,6 @@
+say_hello = fn say_hello (name) ->
+            (
+                say "Hello there, {}!" % name
+            );
+
+say_hello("MochaScript enthusiast");

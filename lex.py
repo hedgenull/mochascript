@@ -2,6 +2,7 @@ import sly
 
 
 class Lexer(sly.Lexer):
+    """MochaScript lexer class."""
     tokens = {
         NUMBER,
         IDENT,
@@ -10,8 +11,6 @@ class Lexer(sly.Lexer):
         RPAREN,
         LBRACK,
         RBRACK,
-        LBRACE,
-        RBRACE,
         COMMA,
         EQEQ,
         NTEQ,

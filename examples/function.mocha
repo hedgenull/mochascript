@@ -1,6 +1,23 @@
-say_hello = fn say_hello (name) ->
-            (
-                say "Hello there, {}!" % name
-            );
+
+# The 'say_hello' after the 'fn' keyword is unnecessary, but a best practice.
+say_hello = fn say_hello (name) -> (
+    say "Hello there, {}!" % name
+);
 
 say_hello("MochaScript enthusiast");
+
+sum = fn sum (list) -> (
+    tally = 0;
+    ((tally = tally + value) for value in list);
+    tally;
+);
+
+say sum([1, 2, 3, 4, 5]);
+
+map = fn map (function, list) -> (
+    result = [];
+    ((result = result + function(value)) for value in list);
+    result;
+);
+
+map(say_hello, ["Bob", "Mary", "Frank"]);

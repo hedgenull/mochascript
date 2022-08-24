@@ -62,7 +62,7 @@ class Parser(sly.Parser):
     @_("LPAREN expr FOR IDENT IN or_expr RPAREN", "LPAREN program FOR IDENT IN or_expr RPAREN")
     def expr(self, p):
         """For-loop expression"""
-        return ForNode(p[1], p.IDENT, p[-2])
+        return ForNode(p[-2], p.IDENT, p[1])
 
     @_(
         "IF or_expr LPAREN expr RPAREN ELSE LPAREN expr RPAREN",
@@ -175,7 +175,7 @@ class Parser(sly.Parser):
     @_("mul_expr TO atom")
     def mul_expr(self, p):
         """Range definition"""
-        return RangeNode(p.atom0, p.atom1)
+        return RangeNode(p.mul_expr, p.atom)
 
     @_("atom")
     def mul_expr(self, p):

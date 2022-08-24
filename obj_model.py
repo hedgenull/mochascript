@@ -353,23 +353,26 @@ class ForNode(SpecialExpression):
         self.body = body
 
     def visit(self):
+        # Reduce the iterator to a single atom
         self.iterator = self.iterator.visit()
 
+        # Ensure that the iterator is an actual iterator
         if not isinstance(self.iterator, Array):
             abort("For-loop can only accept an iterator")
 
-        self.start, self.end = 0, len(self.iterator.value) - 1
+        # Get the start and end of the array
+        self.start, self.end = 0, len(self.iterator.value)
 
-        direction = -1 if self.end < self.start else 1
-
+        # Set result and initialize new environment
         result = None
         ENV.append(Env(**ENV[-1]))
         ENV[-1][self.var] = Boolean(False)
 
-        while self.start != self.end + direction:
+        # Iterate over the array
+        while self.start != self.end:
             ENV[-1][self.var] = self.iterator.value[self.start]
             result = self.body.visit()
-            self.start += direction
+            self.start += 1
 
         return result
 

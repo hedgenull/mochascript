@@ -28,4 +28,4 @@ say "Hello, {}!" % name;
 ```
 
 ## Documentation
-For documentation, read the [wiki](./wiki/).
+For documentation, read the [wiki](../../wiki/).

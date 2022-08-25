@@ -278,6 +278,14 @@ class Parser(sly.Parser):
         """Function definition"""
         return Function(p.program, [], name=p.IDENT)
 
+    @_("FALSE")
+    def atom(self, p):
+        return Boolean(False)
+
+    @_("TRUE")
+    def atom(self, p):
+        return Boolean(True)
+
     @_("IDENT COMMA func_params")
     def func_params(self, p):
         """Function parameters"""

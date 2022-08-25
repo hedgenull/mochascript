@@ -29,6 +29,8 @@ class Lexer(sly.Lexer):
         MOD,
         ARROW,
         LINE_TERM,
+        FALSE,
+        TRUE,
         IF,
         ELSE,
         SAY,
@@ -69,6 +71,8 @@ class Lexer(sly.Lexer):
     LINE_TERM = ";"
 
     # Special keywords
+    IDENT["false"] = FALSE
+    IDENT["true"] = TRUE
     IDENT["if"] = IF
     IDENT["else"] = ELSE
     IDENT["say"] = SAY

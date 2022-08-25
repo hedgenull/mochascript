@@ -494,14 +494,4 @@ class Env(dict):
         return super().__getitem__(key)
 
 
-ENV = [
-    Env(
-        **{
-            # Special constants:
-            "CONST_true": Boolean(True),
-            "CONST_yes": Boolean(True),
-            "CONST_false": Boolean(False),
-            "CONST_no": Boolean(False),
-        }
-    ),
-]
+ENV = [Env()]

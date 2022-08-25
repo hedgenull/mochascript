@@ -1,8 +1,9 @@
 # MochaScript
 
-- [Overview](#overview)
-- [Syntax Example](#syntax-example)
-- [Documentation](#documentation)
+- [MochaScript](#mochascript)
+  - [Overview](#overview)
+  - [Syntax example](#syntax-example)
+  - [Documentation](#documentation)
 
 ## Overview
 MochaScript is a simple, interpreted programming language made for fun and profit. So far, MochaScript supports strings, numbers, booleans, if-else expressions, arrays, constants, variables, functions, loops, and more. In MochaScript, everything is an expression (like Lisp). Really, assume MochaScript is a much more readable Lisp. Which means less parentheses.

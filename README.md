@@ -12,8 +12,10 @@ When I add them, everything from functions to loops will be expressions, meaning
 
 ## Syntax example
 ```py
+# Hello world!
 say "Hello world!";
 
+# Control flow
 my_var = 10;
 
 if my_var == 5 (
@@ -21,8 +23,6 @@ if my_var == 5 (
 ) else (
     my_second_var = 5;
 );
-
-# This is a comment!
 
 say my_second_var; # 5
 

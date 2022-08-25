@@ -3,6 +3,7 @@ import sly
 
 class Lexer(sly.Lexer):
     """MochaScript lexer class."""
+
     tokens = {
         NUMBER,
         IDENT,

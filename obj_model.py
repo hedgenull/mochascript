@@ -1,5 +1,3 @@
-from types import NoneType
-
 from utils import *
 
 BINOP_TO_FUNC_MAP = {

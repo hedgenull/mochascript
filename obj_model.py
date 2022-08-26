@@ -14,6 +14,7 @@ BINOP_TO_FUNC_MAP = {
     ">=": "ge",
     "&&": "_and",
     "||": "_or",
+    "in": "contains",
 }
 
 UNOP_TO_FUNC_MAP = {
@@ -186,6 +187,9 @@ class Array(Atom):
         elif isinstance(other, SpecialExpression):
             return self.div(other.visit())
         abort(f"Invalid types for operation: Array and {type(other).__name__}")
+
+    def contains(self, other):
+        return Boolean(vars(other) in [vars(item) for item in self.value])
 
     def neg(self):
         return Array(self.value[::-1])

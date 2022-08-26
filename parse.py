@@ -157,28 +157,38 @@ class Parser(sly.Parser):
         """Multiplication, division, modulus, or range expression"""
         return p.mul_expr
 
-    @_("mul_expr MUL atom")
+    @_("mul_expr MUL rng_expr")
     def mul_expr(self, p):
         """Multiplication expression"""
-        return BinOp("*", p.mul_expr, p.atom)
+        return BinOp("*", p.mul_expr, p.rng_expr)
 
-    @_("mul_expr DIV atom")
+    @_("mul_expr DIV rng_expr")
     def mul_expr(self, p):
         """Division expression"""
-        return BinOp("/", p.mul_expr, p.atom)
+        return BinOp("/", p.mul_expr, p.rng_expr)
 
-    @_("mul_expr MOD atom")
+    @_("mul_expr MOD rng_expr")
     def mul_expr(self, p):
         """Modulus expression"""
-        return BinOp("%", p.mul_expr, p.atom)
+        return BinOp("%", p.mul_expr, p.rng_expr)
 
-    @_("mul_expr TO atom")
+    @_("rng_expr")
     def mul_expr(self, p):
+        """Range or containment expression"""
+        return p.rng_expr
+
+    @_("rng_expr TO atom")
+    def rng_expr(self, p):
         """Range definition"""
-        return RangeNode(p.mul_expr, p.atom)
+        return RangeNode(p.rng_expr, p.atom)
+
+    @_("rng_expr IN atom")
+    def rng_expr(self, p):
+        """Array-contains expression"""
+        return BinOp("in", p.atom, p.rng_expr)
 
     @_("atom")
-    def mul_expr(self, p):
+    def rng_expr(self, p):
         """Atomic expression"""
         return p.atom
 

@@ -37,6 +37,7 @@ class Lexer(sly.Lexer):
         ASK,
         EXIT,
         FOR,
+        WHILE,
         TO,
         IN,
         FN,
@@ -79,6 +80,7 @@ class Lexer(sly.Lexer):
     IDENT["ask"] = ASK
     IDENT["exit"] = EXIT
     IDENT["for"] = FOR
+    IDENT["while"] = WHILE
     IDENT["to"] = TO
     IDENT["in"] = IN
     IDENT["fn"] = FN

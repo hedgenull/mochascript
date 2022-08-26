@@ -54,15 +54,26 @@ class Parser(sly.Parser):
         """Function call, without arguments"""
         return CallNode(p.or_expr, [])
 
+    @_("WHILE or_expr LPAREN expr RPAREN", "WHILE or_expr LPAREN program RPAREN")
+    def expr(self, p):
+        """While-loop expression"""
+        return WhileNode(
+            p.or_expr,
+            p[-2]
+        )
+
+    @_("LPAREN expr WHILE or_expr RPAREN", "LPAREN program WHILE or_expr RPAREN")
+    def expr(self, p):
+        """While-loop expression"""
+        return WhileNode(
+            p.or_expr,
+            p[1]
+        )
+
     @_("LPAREN expr IF or_expr ELSE expr RPAREN", "LPAREN program IF or_expr ELSE program RPAREN")
     def expr(self, p):
         """If-expression"""
-        return IfNode(p[1], p.or_expr, p[-2])
-
-    @_("LPAREN expr FOR IDENT IN or_expr RPAREN", "LPAREN program FOR IDENT IN or_expr RPAREN")
-    def expr(self, p):
-        """For-loop expression"""
-        return ForNode(p[-2], p.IDENT, p[1])
+        return IfNode(p.or_expr, p[1], p[-2])
 
     @_(
         "IF or_expr LPAREN expr RPAREN ELSE LPAREN expr RPAREN",
@@ -70,7 +81,12 @@ class Parser(sly.Parser):
     )
     def expr(self, p):
         """If-expression"""
-        return IfNode(p[3], p.or_expr, p[-2])
+        return IfNode(p.or_expr, p[3], p[-2])
+
+    @_("LPAREN expr FOR IDENT IN or_expr RPAREN", "LPAREN program FOR IDENT IN or_expr RPAREN")
+    def expr(self, p):
+        """For-loop expression"""
+        return ForNode(p[-2], p.IDENT, p[1])
 
     @_("FOR IDENT IN or_expr LPAREN expr RPAREN", "FOR IDENT IN or_expr RPAREN program RPAREN")
     def expr(self, p):

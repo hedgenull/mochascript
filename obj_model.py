@@ -346,8 +346,22 @@ class IfNode(SpecialExpression):
         )
 
 
+class WhileNode(SpecialExpression):
+    """While loop class for MochaScript."""
+
+    def __init__(self, condition, block):
+        self.condition = condition
+        self.block = block
+
+    def visit(self):
+        result = None
+        while self.condition.visit().value:
+            result = self.block.visit()
+        return result
+
+
 class ForNode(SpecialExpression):
-    """For-to loop class for MochaScript."""
+    """For-loop class for MochaScript."""
 
     def __init__(self, iterator, var, body):
         self.iterator = iterator

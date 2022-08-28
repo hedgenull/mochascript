@@ -87,6 +87,9 @@ class BaseObject:
             + str({k: v for k, v in self.__dict__.items() if not k.startswith("__")})
         )
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__ and type(self) == type(other)
+
 
 class Atom(BaseObject):
     """Base class for all atoms- i.e. objects that have a "value" attribute"""
@@ -134,7 +137,7 @@ class Number(Atom):
         abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
     def pos(self):
-        return Number(+self.value)
+        return Number(abs(self.value))
 
     def neg(self):
         return Number(-self.value)

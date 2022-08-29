@@ -54,7 +54,7 @@ class BaseObject:
         return Boolean(self.visit().value >= other.visit().value)
 
     def eq(self, other):
-        return Boolean(self.visit().value == other.visit().value)
+        return Boolean(self.visit() == other.visit())
 
     def ne(self, other):
         return Boolean(self.visit().value != other.visit().value)

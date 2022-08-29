@@ -60,3 +60,10 @@ class ArrayTestCase(unittest.TestCase):
         self.assertEqual(
             even_numbers.contains(three), false, "Array containment operation should be false"
         )
+
+    def test_reverse(self):
+        """Test Array reversal (negation)."""
+        abc = Array([String("a"), String("b"), String("c")])
+        expected = Array([String("c"), String("b"), String("a")])
+
+        self.assertEqual(abc.neg(), expected, "Array reversal failed")

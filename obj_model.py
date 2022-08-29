@@ -276,7 +276,7 @@ class Function(Atom):
         _assignments = [k.visit() for k in arguments.keys() if isinstance(k, AssignmentNode)]
         arguments = {k: v for k, v in arguments.items() if not isinstance(k, AssignmentNode)}
         updated_args = {**ENV[-1], **self.closure_env, **arguments}
-        ENV.append(MochaScriptEnvironment(**updated_args))
+        ENV.append(MSEnv(**updated_args))
         # Get the result of the function
         result = self.body.visit()
         if isinstance(result, Function):
@@ -386,7 +386,7 @@ class ForNode(SpecialExpression):
 
         # Set result and initialize new environment
         result = None
-        ENV.append(MochaScriptEnvironment(**ENV[-1]))
+        ENV.append(MSEnv(**ENV[-1]))
         ENV[-1][self.var] = Boolean(False)
 
         # Iterate over the array
@@ -499,7 +499,7 @@ class ReferenceNode(SpecialExpression):
         return value
 
 
-class MochaScriptEnvironment(dict):
+class MSEnv(dict):
     """Environment object. Used to store variables."""
 
     def __init__(self, **kwargs):
@@ -517,4 +517,4 @@ class MochaScriptEnvironment(dict):
         return super().__getitem__(key)
 
 
-ENV = [MochaScriptEnvironment()]
+ENV = [MSEnv()]

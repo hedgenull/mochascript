@@ -2,12 +2,13 @@ import sys
 
 from lex import Lexer
 from parse import Parser
+from utils import PROMPT
 
 
 def shell(lexer: Lexer, parser: Parser):
     """Start the interactive shell."""
     while True:
-        source = input(">>> ").strip()
+        source = input(PROMPT).strip()
         if not source:
             continue
 

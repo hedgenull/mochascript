@@ -18,7 +18,7 @@ class Parser(sly.Parser):
     @_("IDENT EQ expr")
     def expr(self, p):
         """Assignment expression"""
-        return Assignment(p.IDENT, p.expr)
+        return AssignmentNode(p.IDENT, p.expr)
 
     @_("EXIT")
     def expr(self, p):
@@ -241,7 +241,7 @@ class Parser(sly.Parser):
     @_("IDENT")
     def atom(self, p):
         """Variable or constant reference"""
-        return Reference(p.IDENT)
+        return ReferenceNode(p.IDENT)
 
     @_("array")
     def atom(self, p):

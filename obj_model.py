@@ -273,10 +273,10 @@ class Function(Atom):
     def call(self, arguments):
         """Call the function with arguments"""
         # Append the passed arguments to the environment
-        _assignments = [k.visit() for k in arguments.keys() if isinstance(k, Assignment)]
-        arguments = {k: v for k, v in arguments.items() if not isinstance(k, Assignment)}
+        _assignments = [k.visit() for k in arguments.keys() if isinstance(k, AssignmentNode)]
+        arguments = {k: v for k, v in arguments.items() if not isinstance(k, AssignmentNode)}
         updated_args = {**ENV[-1], **self.closure_env, **arguments}
-        ENV.append(Env(**updated_args))
+        ENV.append(MochaScriptEnvironment(**updated_args))
         # Get the result of the function
         result = self.body.visit()
         if isinstance(result, Function):
@@ -306,6 +306,8 @@ class Function(Atom):
 
 
 class SpecialExpression(BaseObject):
+    """Special expression base class for MochaScript."""
+
     pass
 
 
@@ -384,7 +386,7 @@ class ForNode(SpecialExpression):
 
         # Set result and initialize new environment
         result = None
-        ENV.append(Env(**ENV[-1]))
+        ENV.append(MochaScriptEnvironment(**ENV[-1]))
         ENV[-1][self.var] = Boolean(False)
 
         # Iterate over the array
@@ -472,7 +474,7 @@ class CallNode(SpecialExpression):
         return result
 
 
-class Assignment(SpecialExpression):
+class AssignmentNode(SpecialExpression):
     """Assignment manager for MochaScript."""
 
     def __init__(self, name, value):
@@ -484,7 +486,7 @@ class Assignment(SpecialExpression):
         return ENV[-1][self.name]
 
 
-class Reference(SpecialExpression):
+class ReferenceNode(SpecialExpression):
     """Variable/constant manager for MochaScript."""
 
     def __init__(self, name):
@@ -497,7 +499,7 @@ class Reference(SpecialExpression):
         return value
 
 
-class Env(dict):
+class MochaScriptEnvironment(dict):
     """Environment object. Used to store variables."""
 
     def __init__(self, **kwargs):
@@ -515,4 +517,4 @@ class Env(dict):
         return super().__getitem__(key)
 
 
-ENV = [Env()]
+ENV = [MochaScriptEnvironment()]

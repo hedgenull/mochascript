@@ -4,6 +4,7 @@ from obj_model import *
 
 
 class NumberTestCase(unittest.TestCase):
+    """Test cases for the Number object"""
     def test_addition(self):
         one = Number(1)
         three = Number(3)

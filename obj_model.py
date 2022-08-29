@@ -228,7 +228,7 @@ class String(Array):
 
     def div(self, other):
         if isinstance(other, Number):
-            return self.value[int(other.value)]
+            return String(self.value[int(other.value)])
         elif isinstance(other, SpecialExpression):
             return self.div(other.visit())
         abort(f"Invalid types for operation: String and {type(other).__name__}")

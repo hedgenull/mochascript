@@ -34,6 +34,29 @@ class ArrayTestCase(unittest.TestCase):
         """Test Array indexing (division with a Number)."""
         stuff = Array([String("shoes"), String("bag"), String("pencil")])
         first = Number(0)
-        expected = String("shoes")
+        second = Number(1)
+        third = Number(2)
+        last = Number(-1)
+        shoes = String("shoes")
+        bag = String("bag")
+        pencil = String("pencil")
 
-        self.assertEqual(stuff.div(first), expected, "Array indexing failed")
+        self.assertEqual(stuff.div(first), shoes, "Array 0-indexing failed")
+        self.assertEqual(stuff.div(second), bag, "Array 1-indexing failed")
+        self.assertEqual(stuff.div(third), pencil, "Array 2-indexing failed")
+        self.assertEqual(stuff.div(last), pencil, "Array -1-indexing failed")
+
+    def test_contains(self):
+        """Test Array containment check (`in` operator)."""
+        even_numbers = Array([Number(2), Number(4), Number(6)])
+        three = Number(3)
+        four = Number(4)
+        true = Boolean(True)
+        false = Boolean(False)
+
+        self.assertEqual(
+            even_numbers.contains(four), true, "Array containment operation should be true"
+        )
+        self.assertEqual(
+            even_numbers.contains(three), false, "Array containment operation should be false"
+        )

@@ -54,6 +54,20 @@ class StringTestCase(unittest.TestCase):
 
         self.assertEqual(hello.mod(world), expected, "String formatting/modulus failed")
 
+    def test_uppercase(self):
+        """Test String uppercasing (positive)."""
+        string = String("fox")
+        expected = String("FOX")
+
+        self.assertEqual(string.pos(), expected, "String uppercasing failed")
+
+    def test_lowercase(self):
+        """Test String lowercasing (negation)."""
+        string = String("CAT")
+        expected = String("cat")
+
+        self.assertEqual(string.neg(), expected, "String lowercasing failed")
+
 
 if __name__ == "__main__":
     unittest.main()

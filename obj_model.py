@@ -179,7 +179,7 @@ class Array(Atom):
 
     def mul(self, other):
         if isinstance(other, Number):
-            return Array(self.value * other.value)
+            return Array(self.value * int(other.value))
         elif isinstance(other, SpecialExpression):
             return self.mul(other.visit())
         abort(f"Invalid types for operation: Array and {type(other).__name__}")

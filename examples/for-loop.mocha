@@ -1,0 +1,7 @@
+list = ["Cheese", "Steak", "Cake", "Pizza"];
+
+for food in list (
+    say "{} is my favorite food!" % food
+);
+
+range = 1 to 10;

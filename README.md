@@ -19,13 +19,13 @@ say "Hello world!";
 # Control flow
 my_var = 10;
 
-if my_var == 5 (
-    my_second_var = 1.2;
-) else (
-    my_second_var = 5;
-);
+my_2nd_var = if my_var == 5 (
+                1.2
+             ) else (
+                5
+             );
 
-say my_second_var; # 5
+say my_2nd_var; # 5
 
 # I/O
 name = ask "What's your name? ";

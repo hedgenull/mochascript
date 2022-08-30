@@ -1,0 +1,7 @@
+a = 3;
+
+if a == 3 (
+    say "a is 3?! No way!";
+) else (
+    say "What even is a?";
+);

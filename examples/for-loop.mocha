@@ -1,7 +1,14 @@
 list = ["Cheese", "Steak", "Cake", "Pizza"];
 
+# Iterate over the array
 for food in list (
     say "{} is my favorite food!" % food
 );
 
 range = 1 to 10;
+
+for i in range (
+    say 11 - i # Count down from 10
+);
+
+say "Lift off!";

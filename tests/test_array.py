@@ -67,3 +67,7 @@ class ArrayTestCase(unittest.TestCase):
         expected = Array([String("c"), String("b"), String("a")])
 
         self.assertEqual(abc.neg(), expected, "Array reversal failed")
+
+
+if __name__ == "__main__":
+    unittest.main()

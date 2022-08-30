@@ -17,7 +17,7 @@ def shell(lexer: Lexer, parser: Parser):
 
         tokens = lexer.tokenize(source)
         ast = parser.parse(tokens)
-        # Uncomment this line if you want to print the AST details
+        # Uncomment this line if you want to print the AST details for debugging
         # print(ast)
         try:
             result = ast.visit()

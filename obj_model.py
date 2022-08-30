@@ -464,8 +464,8 @@ class CallNode(SpecialExpression):
     def visit(self):
         # Make sure the expression is fully reduced into a function.
         self.function = self.function.visit()
-        self.arguments = dict(zip(self.function.parameters, self.arguments))
         if hasattr(self.function, "call"):
+            self.arguments = dict(zip(self.function.parameters, self.arguments))
             result = self.function.call(self.arguments)
         else:
             abort(f"{self.function.repr()} is not a callable object!")

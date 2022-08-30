@@ -1,0 +1,10 @@
+map = fn map (func, arr) -> (
+    result = [];
+    for val in arr (
+        result = result + (func(val))
+    );
+);
+
+print = fn print (thing) -> (say thing);
+
+map(print, [1, 2, 3]);

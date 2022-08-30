@@ -20,10 +20,10 @@ say "Hello world!";
 my_var = 10;
 
 my_2nd_var = if my_var == 5 (
-                1.2
-             ) else (
-                5
-             );
+  1.2
+) else (
+  5
+);
 
 say my_2nd_var; # 5
 

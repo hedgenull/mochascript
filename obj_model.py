@@ -308,8 +308,6 @@ class Function(Atom):
 class SpecialExpression(BaseObject):
     """Special expression base class for MochaScript."""
 
-    pass
-
 
 class BinOp(SpecialExpression):
     """Binary operation class for MochaScript."""

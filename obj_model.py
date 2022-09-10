@@ -74,6 +74,9 @@ class BaseObject:
     def visit(self):
         return self
 
+    def str(self):
+        return str(self.value)
+
     def repr(self):
         return str(self.value)
 
@@ -205,9 +208,7 @@ class String(Array):
     """String class for MochaScript."""
 
     def __init__(self, value=""):
-        self.value = (
-            str(value).strip('"').replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
-        )
+        self.value = value[1:-1]
 
     def add(self, other):
         if isinstance(other, SpecialExpression):
@@ -245,7 +246,7 @@ class String(Array):
         return String(self.value.lower())
 
     def repr(self):
-        return self.value
+        return f'"{self.value}"'
 
 
 class Boolean(Atom):
@@ -358,7 +359,8 @@ class WhileNode(SpecialExpression):
 
     def visit(self):
         result = None
-        while self.condition.visit().value:
+
+        while self.condition.visit():
             result = self.block.visit()
         return result
 
@@ -420,7 +422,7 @@ class SayNode(SpecialExpression):
 
     def visit(self):
         result = self.expr.visit()
-        print(result.repr())
+        print(result.str())
         return result
 
 
@@ -431,7 +433,7 @@ class AskNode(SpecialExpression):
         self.expr = expr
 
     def visit(self):
-        return String(input(self.expr.visit().repr()))
+        return String(input(self.expr.visit().str()))
 
 
 class ExitNode(SpecialExpression):
@@ -462,10 +464,13 @@ class CallNode(SpecialExpression):
         self.arguments = arguments
 
     def visit(self):
-        # Make sure the expression is fully reduced into a function.
         self.function = self.function.visit()
         if hasattr(self.function, "call"):
-            self.arguments = dict(zip(self.function.parameters, self.arguments))
+            self.arguments = {
+                key: val.visit()
+                for key, val in dict(zip(self.function.parameters, self.arguments)).items()
+            }
+            print(self.arguments)
             result = self.function.call(self.arguments)
         else:
             abort(f"{self.function.repr()} is not a callable object!")

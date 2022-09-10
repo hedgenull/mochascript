@@ -66,10 +66,14 @@ class BaseObject:
         return -self.value
 
     def _and(self, other):
-        return Boolean(Boolean(self.visit().value).value and Boolean(other.visit().value).value)
+        return Boolean(
+            Boolean(self.visit().value).value and Boolean(other.visit().value).value
+        )
 
     def _or(self, other):
-        return Boolean(Boolean(self.visit().value).value or Boolean(other.visit().value).value)
+        return Boolean(
+            Boolean(self.visit().value).value or Boolean(other.visit().value).value
+        )
 
     def visit(self):
         return self
@@ -267,6 +271,7 @@ class Function(Atom):
         self.parameters = parameters
         self.closure_env = closure_env or {}
         self.name = name
+        self.value = True
 
     def repr(self):
         return f"<function {self.name}>" if self.name else "<anonymous function object>"
@@ -274,8 +279,12 @@ class Function(Atom):
     def call(self, arguments):
         """Call the function with arguments"""
         # Append the passed arguments to the environment
-        _assignments = [k.visit() for k in arguments.keys() if isinstance(k, AssignmentNode)]
-        arguments = {k: v for k, v in arguments.items() if not isinstance(k, AssignmentNode)}
+        _assignments = [
+            k.visit() for k in arguments.keys() if isinstance(k, AssignmentNode)
+        ]
+        arguments = {
+            k: v for k, v in arguments.items() if not isinstance(k, AssignmentNode)
+        }
         updated_args = {**ENV[-1], **self.closure_env, **arguments}
         ENV.append(MSEnv(**updated_args))
         # Get the result of the function
@@ -346,7 +355,9 @@ class IfNode(SpecialExpression):
 
     def visit(self):
         return (
-            self.true_block.visit() if self.condition.visit().value else self.false_block.visit()
+            self.true_block.visit()
+            if self.condition.visit().value
+            else self.false_block.visit()
         )
 
 
@@ -360,7 +371,7 @@ class WhileNode(SpecialExpression):
     def visit(self):
         result = None
 
-        while self.condition.visit():
+        while self.condition.visit().value:
             result = self.block.visit()
         return result
 
@@ -409,7 +420,9 @@ class RangeNode(SpecialExpression):
         return Array(
             [
                 Number(n)
-                for n in range(int(self.start.visit().value), int(self.end.visit().value + 1))
+                for n in range(
+                    int(self.start.visit().value), int(self.end.visit().value + 1)
+                )
             ]
         )
 
@@ -468,7 +481,9 @@ class CallNode(SpecialExpression):
         if hasattr(self.function, "call"):
             self.arguments = {
                 key: val.visit()
-                for key, val in dict(zip(self.function.parameters, self.arguments)).items()
+                for key, val in dict(
+                    zip(self.function.parameters, self.arguments)
+                ).items()
             }
             print(self.arguments)
             result = self.function.call(self.arguments)

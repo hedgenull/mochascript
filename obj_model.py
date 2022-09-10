@@ -156,6 +156,8 @@ class Number(Atom):
             else "0"
         )
 
+    str = repr
+
 
 class Array(Atom):
     """Array/list class for MochaScript."""

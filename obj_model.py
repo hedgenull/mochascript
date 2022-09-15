@@ -135,7 +135,7 @@ class Number(Atom):
 
     def exp(self, other):
         if isinstance(other, Number):
-            return Number(self.value ** other.value)
+            return Number(self.value**other.value)
         elif isinstance(other, SpecialExpression):
             return self.exp(other.visit())
         abort(f"Invalid types for operation: Number and {type(other).__name__}")
@@ -468,7 +468,7 @@ class ExitNode(SpecialExpression):
         self.expr = expr
 
     def visit(self):
-        abort(self.expr.visit().repr())
+        abort(self.expr.visit().str())
 
 
 class BlockNode(SpecialExpression):

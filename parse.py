@@ -57,20 +57,17 @@ class Parser(sly.Parser):
     @_("WHILE or_expr LPAREN expr RPAREN", "WHILE or_expr LPAREN program RPAREN")
     def expr(self, p):
         """While-loop expression"""
-        return WhileNode(
-            p.or_expr,
-            p[-2]
-        )
+        return WhileNode(p.or_expr, p[-2])
 
     @_("LPAREN expr WHILE or_expr RPAREN", "LPAREN program WHILE or_expr RPAREN")
     def expr(self, p):
         """While-loop expression"""
-        return WhileNode(
-            p.or_expr,
-            p[1]
-        )
+        return WhileNode(p.or_expr, p[1])
 
-    @_("LPAREN expr IF or_expr ELSE expr RPAREN", "LPAREN program IF or_expr ELSE program RPAREN")
+    @_(
+        "LPAREN expr IF or_expr ELSE expr RPAREN",
+        "LPAREN program IF or_expr ELSE program RPAREN",
+    )
     def expr(self, p):
         """If-expression"""
         return IfNode(p.or_expr, p[1], p[-2])
@@ -83,12 +80,18 @@ class Parser(sly.Parser):
         """If-expression"""
         return IfNode(p.or_expr, p[3], p[-2])
 
-    @_("LPAREN expr FOR IDENT IN or_expr RPAREN", "LPAREN program FOR IDENT IN or_expr RPAREN")
+    @_(
+        "LPAREN expr FOR IDENT IN or_expr RPAREN",
+        "LPAREN program FOR IDENT IN or_expr RPAREN",
+    )
     def expr(self, p):
         """For-loop expression"""
         return ForNode(p[-2], p.IDENT, p[1])
 
-    @_("FOR IDENT IN or_expr LPAREN expr RPAREN", "FOR IDENT IN or_expr RPAREN program RPAREN")
+    @_(
+        "FOR IDENT IN or_expr LPAREN expr RPAREN",
+        "FOR IDENT IN or_expr RPAREN program RPAREN",
+    )
     def expr(self, p):
         """For-loop expression"""
         return ForNode(p.or_expr, p.IDENT, p[-2])
@@ -173,23 +176,33 @@ class Parser(sly.Parser):
         """Multiplication, division, modulus, or range expression"""
         return p.mul_expr
 
-    @_("mul_expr MUL rng_expr")
+    @_("mul_expr MUL exp_expr")
     def mul_expr(self, p):
         """Multiplication expression"""
-        return BinOp("*", p.mul_expr, p.rng_expr)
+        return BinOp("*", p.mul_expr, p.exp_expr)
 
-    @_("mul_expr DIV rng_expr")
+    @_("mul_expr DIV exp_expr")
     def mul_expr(self, p):
         """Division expression"""
-        return BinOp("/", p.mul_expr, p.rng_expr)
+        return BinOp("/", p.mul_expr, p.exp_expr)
 
-    @_("mul_expr MOD rng_expr")
+    @_("mul_expr MOD exp_expr")
     def mul_expr(self, p):
         """Modulus expression"""
-        return BinOp("%", p.mul_expr, p.rng_expr)
+        return BinOp("%", p.mul_expr, p.exp_expr)
+
+    @_("exp_expr")
+    def mul_expr(self, p):
+        """Exponent expression"""
+        return p.exp_expr
+
+    @_("exp_expr EXP rng_expr")
+    def exp_expr(self, p):
+        """Exponent expression"""
+        return BinOp("**", p.exp_expr, p.rng_expr)
 
     @_("rng_expr")
-    def mul_expr(self, p):
+    def exp_expr(self, p):
         """Range or containment expression"""
         return p.rng_expr
 

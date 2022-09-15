@@ -3,6 +3,7 @@ from utils import *
 BINOP_TO_FUNC_MAP = {
     "+": "add",
     "-": "sub",
+    "**": "exp",
     "*": "mul",
     "/": "div",
     "%": "mod",
@@ -31,6 +32,9 @@ class BaseObject:
 
     def sub(self, other):
         return self.visit().sub(other.visit())
+
+    def exp(self, other):
+        return self.visit().exp(other.visit())
 
     def mul(self, other):
         return self.visit().mul(other.visit())
@@ -129,6 +133,13 @@ class Number(Atom):
             return self.mul(other.visit())
         abort(f"Invalid types for operation: Number and {type(other).__name__}")
 
+    def exp(self, other):
+        if isinstance(other, Number):
+            return Number(self.value ** other.value)
+        elif isinstance(other, SpecialExpression):
+            return self.exp(other.visit())
+        abort(f"Invalid types for operation: Number and {type(other).__name__}")
+
     def div(self, other):
         if isinstance(other, Number):
             return Number(self.value / other.value)
@@ -179,8 +190,7 @@ class Array(Atom):
     def sub(self, other):
         if isinstance(other, Atom):
             copy = self.value[:]
-            while other in copy:
-                copy.remove(other)
+            copy.remove(other)
             return Array(copy)
         elif isinstance(other, SpecialExpression):
             return self.sub(other.visit())
@@ -219,12 +229,12 @@ class String(Array):
     def add(self, other):
         if isinstance(other, SpecialExpression):
             return self.add(other.visit())
-        return String(self.value + other.repr())
+        return String(self.value + other.str())
 
     def sub(self, other):
         if isinstance(other, SpecialExpression):
             return self.sub(other.visit())
-        return String(self.value.replace(other.repr(), ""))
+        return String(self.value.replace(other.str(), ""))
 
     def mul(self, other):
         if isinstance(other, Number):
@@ -243,7 +253,7 @@ class String(Array):
     def mod(self, other):
         if isinstance(other, SpecialExpression):
             return self.mod(other.visit())
-        return String(self.value.replace("{}", other.repr()))
+        return String(self.value.replace("{}", other.str()))
 
     def pos(self):
         return String(self.value.upper())
@@ -507,7 +517,7 @@ class AssignmentNode(SpecialExpression):
 
 
 class ReferenceNode(SpecialExpression):
-    """Variable/constant manager for MochaScript."""
+    """Reference manager for MochaScript."""
 
     def __init__(self, name):
         self.name = name
@@ -519,22 +529,4 @@ class ReferenceNode(SpecialExpression):
         return value
 
 
-class MSEnv(dict):
-    """Environment object. Used to store variables."""
-
-    def __init__(self, **kwargs):
-        self.constants = []
-        super().__init__(**kwargs)
-
-    def __setitem__(self, key, value):
-        if key in self.constants:
-            return
-        elif key.startswith("CONST_"):
-            self.constants.append(key.removeprefix("CONST_"))
-        super().__setitem__(key.removeprefix("CONST_"), value)
-
-    def __getitem__(self, key):
-        return super().__getitem__(key)
-
-
-ENV = [MSEnv()]
+ENV = [{}]

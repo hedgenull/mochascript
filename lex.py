@@ -25,6 +25,7 @@ class Lexer(sly.Lexer):
         PLUS,
         MINUS,
         MUL,
+        EXP,
         DIV,
         MOD,
         ARROW,
@@ -66,6 +67,7 @@ class Lexer(sly.Lexer):
     OR = r"\|\|"
     PLUS = r"\+"
     MINUS = r"\-"
+    EXP = r"\*\*"
     MUL = r"\*"
     DIV = r"\/"
     MOD = r"\%"

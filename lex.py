@@ -12,6 +12,7 @@ class Lexer(sly.Lexer):
         RPAREN,
         LBRACK,
         RBRACK,
+        ARROW,
         COMMA,
         EQEQ,
         NTEQ,
@@ -28,7 +29,6 @@ class Lexer(sly.Lexer):
         EXP,
         DIV,
         MOD,
-        ARROW,
         LINE_TERM,
         FALSE,
         TRUE,
@@ -47,33 +47,56 @@ class Lexer(sly.Lexer):
     ignore = " \t\n"
     ignore_comment = r"#.*"
 
+    # Literals and identifiers
     NUMBER = r"([0-9]+\.?[0-9]*|\.[0-9]+)"
-    IDENT = r"[a-zA-Z_][a-zA-Z0-9_]*"
     STRING = r"\"[^\"]*\""
+    IDENT = r"[a-zA-Z_][a-zA-Z0-9_]*"
+
+    # Parentheses types
     LPAREN = r"\("
     RPAREN = r"\)"
     LBRACK = r"\["
     RBRACK = r"\]"
+
+    # Special
     COMMA = r","
     ARROW = r"->"
+    LINE_TERM = ";"
+
+    # Operator-assignments
+    PLUSEQ = r"\+="
+    MINUSEQ = r"\-="
+    MULEQ = r"\*="
+    DIVEQ = r"\/="
+    MODEQ = r"%="
+    EXPEQ = r"\*\*="
+    OREQ = r"\|\|="
+    ANDEQ = r"&&="
+
+    # Comparison operators
     EQEQ = r"=="
     NTEQ = r"!="
     LTEQ = r"<="
     GTEQ = r">="
     LT = r"<"
     GT = r">"
-    EQ = r"="
+
+    # Logical operators
     AND = r"\&\&"
     OR = r"\|\|"
+
+    # Mathematical operators
     PLUS = r"\+"
     MINUS = r"\-"
-    EXP = r"\*\*"
     MUL = r"\*"
     DIV = r"\/"
     MOD = r"\%"
-    LINE_TERM = ";"
+    EXP = r"\*\*"
 
-    # Special keywords
+    # Assignment operator
+    EQ = r"="
+
+    # Keywords
     IDENT["false"] = FALSE
     IDENT["true"] = TRUE
     IDENT["if"] = IF

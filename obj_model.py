@@ -254,6 +254,18 @@ class String(Array):
         if isinstance(other, SpecialExpression):
             return self.mod(other.visit())
         return String(self.value.replace("{}", other.str()))
+    
+    def lt(self, other):
+        return Boolean(len(self.visit().value) < len(other.visit().value))
+
+    def gt(self, other):
+        return Boolean(len(self.visit().value) > len(other.visit().value))
+
+    def le(self, other):
+        return Boolean(len(self.visit().value) <= len(other.visit().value))
+
+    def ge(self, other):
+        return Boolean(len(self.visit().value) >= len(other.visit().value))
 
     def pos(self):
         return String(self.value.upper())

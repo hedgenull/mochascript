@@ -6,32 +6,32 @@ class Lexer(sly.Lexer):
 
     tokens = {
         NUMBER,
-        IDENT,
         STRING,
+        IDENT,
         LPAREN,
         RPAREN,
         LBRACK,
         RBRACK,
-        ARROW,
         COMMA,
+        ARROW,
+        LINE_TERM,
         EQEQ,
         NTEQ,
         LTEQ,
         GTEQ,
         LT,
         GT,
-        EQ,
         AND,
         OR,
         PLUS,
         MINUS,
         MUL,
-        EXP,
         DIV,
         MOD,
-        LINE_TERM,
-        FALSE,
+        EXP,
+        EQ,
         TRUE,
+        FALSE,
         IF,
         ELSE,
         SAY,
@@ -97,8 +97,8 @@ class Lexer(sly.Lexer):
     EQ = r"="
 
     # Keywords
-    IDENT["false"] = FALSE
     IDENT["true"] = TRUE
+    IDENT["false"] = FALSE
     IDENT["if"] = IF
     IDENT["else"] = ELSE
     IDENT["say"] = SAY

@@ -493,7 +493,7 @@ class BlockNode(SpecialExpression):
         return [expr.visit() for expr in self.exprs][-1]
 
 
-class CallNode(SpecialExpression):
+class CallFunctionNode(SpecialExpression):
     """Calls a function."""
 
     def __init__(self, function, arguments):

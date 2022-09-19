@@ -44,15 +44,15 @@ class Parser(sly.Parser):
     def expr(self, p):
         """Function call, with arguments"""
         return (
-            CallNode(p.or_expr, p.comma_sep)
+            CallFunctionNode(p.or_expr, p.comma_sep)
             if isinstance(p.comma_sep, tuple)
-            else CallNode(p.or_expr, [p.comma_sep])
+            else CallFunctionNode(p.or_expr, [p.comma_sep])
         )
 
     @_("or_expr LPAREN RPAREN")
     def expr(self, p):
         """Function call, without arguments"""
-        return CallNode(p.or_expr, [])
+        return CallFunctionNode(p.or_expr, [])
 
     @_("WHILE or_expr LPAREN expr RPAREN", "WHILE or_expr LPAREN program RPAREN")
     def expr(self, p):

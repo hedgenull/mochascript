@@ -48,7 +48,7 @@ class FunctionTestCase(unittest.TestCase):
         )  # An anonymous function that adds two numbers together
         a = Number(5)  # First argument ("a")
         b = Number(2)  # Second argument ("b")
-        callnode = CallNode(function, [a, b])  # Function caller object
+        callnode = CallFunctionNode(function, [a, b])  # Function caller object
         expected = a.add(b)  # Sum of 5 and 2
 
         self.assertEqual(callnode.visit(), expected, "Function call failed")  # Call the function
@@ -57,7 +57,7 @@ class FunctionTestCase(unittest.TestCase):
         """Test calling a function with no arguments."""
         body = String("Hello, world!")  # The function returns a string literal
         function = Function(body, [])
-        callnode = CallNode(function, [])  # Function caller object
+        callnode = CallFunctionNode(function, [])  # Function caller object
         expected = String("Hello, world!")  # The expected return value
 
         self.assertEqual(callnode.visit(), expected, "Function call failed")  # Call the function

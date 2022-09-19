@@ -254,7 +254,7 @@ class String(Array):
         if isinstance(other, SpecialExpression):
             return self.mod(other.visit())
         return String(self.value.replace("{}", other.str()))
-    
+
     def lt(self, other):
         return Boolean(len(self.visit().value) < len(other.visit().value))
 
@@ -528,6 +528,20 @@ class AssignmentNode(SpecialExpression):
         return ENV[-1][self.name]
 
 
+class InPlaceAssignmentNode(SpecialExpression):
+    """In-place assignment manager for MochaScript."""
+
+    def __init__(self, op, name, value):
+        self.op = op
+        self.name = name
+        self.value = value
+
+    def visit(self):
+        return AssignmentNode(
+            self.name, BinOp(self.op, ReferenceNode(self.name), self.value)
+        ).visit()
+
+
 class ReferenceNode(SpecialExpression):
     """Reference manager for MochaScript."""
 
@@ -541,4 +555,8 @@ class ReferenceNode(SpecialExpression):
         return value
 
 
-ENV = [{}]
+class MSEnv(dict):
+    pass
+
+
+ENV = [MSEnv()]

@@ -15,6 +15,14 @@ class Lexer(sly.Lexer):
         COMMA,
         ARROW,
         LINE_TERM,
+        PLUSEQ,
+        MINUSEQ,
+        MULEQ,
+        DIVEQ,
+        MODEQ,
+        EXPEQ,
+        OREQ,
+        ANDEQ,
         EQEQ,
         NTEQ,
         LTEQ,
@@ -64,12 +72,12 @@ class Lexer(sly.Lexer):
     LINE_TERM = ";"
 
     # Operator-assignments
+    MODEQ = r"%="
+    EXPEQ = r"\*\*="
     PLUSEQ = r"\+="
     MINUSEQ = r"\-="
     MULEQ = r"\*="
     DIVEQ = r"\/="
-    MODEQ = r"%="
-    EXPEQ = r"\*\*="
     OREQ = r"\|\|="
     ANDEQ = r"&&="
 
@@ -86,12 +94,12 @@ class Lexer(sly.Lexer):
     OR = r"\|\|"
 
     # Mathematical operators
+    MOD = r"\%"
+    EXP = r"\*\*"
     PLUS = r"\+"
     MINUS = r"\-"
     MUL = r"\*"
     DIV = r"\/"
-    MOD = r"\%"
-    EXP = r"\*\*"
 
     # Assignment operator
     EQ = r"="

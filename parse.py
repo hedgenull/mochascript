@@ -20,6 +20,20 @@ class Parser(sly.Parser):
         """Assignment expression"""
         return AssignmentNode(p.IDENT, p.expr)
 
+    @_(
+        "IDENT PLUSEQ or_expr",
+        "IDENT MINUSEQ or_expr",
+        "IDENT MULEQ or_expr",
+        "IDENT DIVEQ or_expr",
+        "IDENT MODEQ or_expr",
+        "IDENT EXPEQ or_expr",
+        "IDENT OREQ or_expr",
+        "IDENT ANDEQ or_expr",
+    )
+    def expr(self, p):
+        """In-place assignment expression"""
+        return InPlaceAssignmentNode(p[1].strip("="), p.IDENT, p.or_expr)
+
     @_("EXIT")
     def expr(self, p):
         """Exit-expression"""

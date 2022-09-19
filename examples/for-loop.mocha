@@ -8,7 +8,7 @@ for food in list (
 range = 1 to 10;
 
 for i in range (
-    say 11 - i # Count down from 10
+    say 11 - i; # Count down from 10
 );
 
 say "Lift off!";

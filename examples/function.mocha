@@ -8,7 +8,7 @@ say_hello("MochaScript enthusiast");
 sum = fn sum (list) -> (
     tally = 0;
     for value in list (
-        tally = tally + value
+        tally += value
     );
     tally;
 );

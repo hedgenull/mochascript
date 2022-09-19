@@ -224,7 +224,7 @@ class String(Array):
     """String class for MochaScript."""
 
     def __init__(self, value=""):
-        self.value = value[1:-1]
+        self.value = value.strip('"')
 
     def add(self, other):
         if isinstance(other, SpecialExpression):

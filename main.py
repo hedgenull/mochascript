@@ -16,14 +16,11 @@ def shell(lexer: Lexer, parser: Parser):
             source += ";"
 
         tokens = lexer.tokenize(source)
-        ast = parser.parse(tokens)
-        # Uncomment this line if you want to print the AST details for debugging
-        # print(ast)
-        try:
+
+        if ast := parser.parse(tokens):
             result = ast.visit()
-        except AttributeError as e:
-            print(f"Error: {e}")
-        else:
+            # Uncomment next line for debugging purposes
+            # print(ast)
             print(result.repr())
 
 
@@ -33,7 +30,7 @@ if __name__ == "__main__":
         with open(sys.argv[1]) as source:
             tokens = lexer.tokenize(source.read())
             ast = parser.parse(tokens)
-            ast.visit()
+            ast.visit() if ast else ...
     else:
         print("Starting interactive MochaScript interpreter.")
         shell(lexer, parser)

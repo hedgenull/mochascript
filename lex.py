@@ -52,8 +52,8 @@ class Lexer(sly.Lexer):
         FN,
     }
 
+    ignore_comment = r"(#.*|#\[[.\s]*\])"
     ignore = " \t\n"
-    ignore_comment = r"#.*"
 
     # Literals and identifiers
     NUMBER = r"([0-9]+\.?[0-9]*|\.[0-9]+)"

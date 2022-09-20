@@ -1,7 +1,3 @@
-# Single-line comment!
-#[Multi-
-  line
-comment
-]
+# Single-line comments!
 name = ask "What's your name? ";
 say "Hello, {}! Welcome to MochaScript!\nHave fun programming!" % name;

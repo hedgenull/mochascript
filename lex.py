@@ -1,6 +1,55 @@
 import re
 
-TOKENS = [("")]
+TOKENS = [
+    (r"([0-9]+\.?[0-9]*|\.[0-9]+)", "NUMBER"),
+    (r"\"[^\"]*\"", "STRING"),
+    (r"[a-zA-Z_][a-zA-Z0-9_]*", "IDENT"),
+    (r"\(", "LPAREN"),
+    (r"\)", "RPAREN"),
+    (r"\[", "LBRACK"),
+    (r"\]", "RBRACK"),
+    (r",", "COMMA"),
+    (r"->", "ARROW"),
+    (r";", "LINE_TERM"),
+    (r"\+=", "PLUS_EQ"),
+    (r"\-=", "MINUS_EQ"),
+    (r"\*=", "MUL_EQ"),
+    (r"\/=", "DIV_EQ"),
+    (r"%=", "MOD_EQ"),
+    (r"\*\*=", "EXP_EQ"),
+    (r"\|\|=", "OR_EQ"),
+    (r"&&=", "AND_EQ"),
+    (r"==", "EQEQ"),
+    (r"!=", "NTEQ"),
+    (r"<=", "LTEQ"),
+    (r">=", "GTEQ"),
+    (r"<", "LT"),
+    (r">", "GT"),
+    (r"\|\|", "OR"),
+    (r"&&", "AND"),
+    (r"=", "EQ"),
+    (r"([0-9]+\.?[0-9]*|\.[0-9]+)", "NUMBER"),
+    (r"\"[^\"]*\"", "STRING"),
+    (r"[a-zA-Z_][a-zA-Z0-9_]*", "IDENT"),
+    (r"\+", "PLUS"),
+    (r"\-", "MINUS"),
+    (r"\*", "MUL"),
+    (r"\/", "DIV"),
+    (r"%", "MOD"),
+    (r"\*\*", "EXP"),
+    (r"true", "TRUE"),
+    (r"false", "FALSE"),
+    (r"if", "IF"),
+    (r"else", "ELSE"),
+    (r"say", "SAY"),
+    (r"ask", "ASK"),
+    (r"exit", "EXIT"),
+    (r"while", "WHILE"),
+    (r"for", "FOR"),
+    (r"in", "IN"),
+    (r"to", "TO"),
+    (r"fn", "FN"),
+]
 
 
 class Token(object):
@@ -8,50 +57,38 @@ class Token(object):
     Contains the token type, value and position.
     """
 
+    def __init__(self, type: str, val: str, pos: int) -> None:
+        """
+        Initialize the Token class.
 
-def __init__(self, type: str, val: str, pos: int) -> None:
-    """
-    Initialize the Token class.
+        Args:
+            type: The type of the token.
+            val: The value of the token.
+            pos: The position of the token.
 
-    Args:
-        type: The type of the token.
-        val: The value of the token.
-        pos: The position of the token.
-
-    Returns:
-        None
-    """
-    self.type = type
-    self.val = val
-    self.pos = pos
+        Returns:
+            None
+        """
+        self.type = type
+        self.val = val
+        self.pos = pos
 
     def __str__(self) -> str:
         return f"{self.type}({self.val}) at {self.pos}"
 
 
 class LexerError(Exception):
-    """Lexer error exception.
-    pos:
-        Position in the input line where the error occurred.
-    """
-
-    def __init__(self, pos: tuple[int, int]) -> None:
-        """
-        Initialize the position of the LexerError.
-
-        Args:
-            pos: The position of the LexerError.
-        """
-        self.pos = pos
+    pass
 
 
 class Lexer(object):
-    """A simple regex-based lexer/tokenizer.
-    See below for an example of usage.
-    """
+    """A simple regex-based lexer/tokenizer for MochaScript.
+    Adapted from https://gist.github.com/eliben/5797351 """
 
     def __init__(
-        self, rules: list[tuple[str, str]], skip_whitespace: bool = True
+        self,
+        rules: list[tuple[str, str]],
+        skip_whitespace: bool = True,
     ) -> None:
         """Create a lexer.
         rules:
@@ -74,7 +111,7 @@ class Lexer(object):
             self.group_type[groupname] = type
         self.regex = re.compile("|".join(regex_parts))
         self.skip_whitespace = skip_whitespace
-        self.re_ws_skip = re.compile("\S")
+        self.re_ws_skip = re.compile(" \t\n")
 
     def input(self, buf: str) -> None:
         """Initialize the lexer with a buffer as input."""
@@ -105,7 +142,7 @@ class Lexer(object):
             return tok
 
         # If we're here, no rule matched
-        raise LexerError(self.pos)
+        raise LexerError(f"Error at {self.pos}: {self.buf[self.pos]}")
 
     def tokens(self) -> Token | None:
         """Returns an iterator to the tokens found in the buffer."""
@@ -116,4 +153,16 @@ class Lexer(object):
                 break
 
 
-lexer = Lexer(True)
+lexer = Lexer(TOKENS, True)
+
+if __name__ == "__main__":
+    lexer.input(
+        """
+    hello = "world";
+    say 4 ** 2;
+    ask hello;?
+    << >= >
+    == = != , //%"""
+    )
+    for token in lexer.tokens():
+        print(token)

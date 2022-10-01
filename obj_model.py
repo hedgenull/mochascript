@@ -92,10 +92,8 @@ class BaseObject:
         return self.__class__.__name__
 
     def __repr__(self):
-        return (
-            self.__class__.__name__
-            + " "
-            + str({k: v for k, v in self.__dict__.items() if not k.startswith("__")})
+        return self.__class__.__name__ + str(
+            {k: v for k, v in self.__dict__.items() if not k.startswith("__")}
         )
 
     def __eq__(self, other):
@@ -224,7 +222,12 @@ class String(Array):
     """String class for MochaScript."""
 
     def __init__(self, value=""):
-        self.value = value.strip('"').replace(r"\n", "\n").replace(r"\t", "\t").replace(r"\\", "\\")
+        self.value = (
+            value.strip('"')
+            .replace(r"\n", "\n")
+            .replace(r"\t", "\t")
+            .replace(r"\\", "\\")
+        )
 
     def add(self, other):
         if isinstance(other, SpecialExpression):
@@ -295,7 +298,7 @@ class Function(Atom):
         self.parameters = parameters
         self.closure_env = closure_env or {}
         self.name = name
-        self.value = True
+        self.value = self.repr()
 
     def repr(self):
         return f"<function {self.name}>" if self.name else "<anonymous function object>"
@@ -509,7 +512,6 @@ class CallFunctionNode(SpecialExpression):
                     zip(self.function.parameters, self.arguments)
                 ).items()
             }
-            print(self.arguments)
             result = self.function.call(self.arguments)
         else:
             abort(f"{self.function.repr()} is not a callable object!")

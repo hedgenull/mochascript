@@ -1,26 +1,26 @@
 from utils import *
 
 BINOP_TO_FUNC_MAP = {
-    "+": "add",
-    "-": "sub",
-    "**": "exp",
-    "*": "mul",
-    "/": "div",
-    "%": "mod",
-    "==": "eq",
-    "!=": "ne",
-    "<": "lt",
-    ">": "gt",
-    "<=": "le",
-    ">=": "ge",
-    "&&": "_and",
-    "||": "_or",
-    "in": "contains",
+    "+": "add",  # Addition
+    "-": "sub",  # Subtraction
+    "*": "mul",  # Multiplication
+    "/": "div",  # Division
+    "%": "mod",  # Modulus
+    "**": "exp",  # Exponentiation
+    "==": "eq",  # Equality
+    "!=": "ne",  # Negated equality
+    "<": "lt",  # Less-than
+    ">": "gt",  # Greater-than
+    "<=": "le",  # Less-than or equal to
+    ">=": "ge",  # Greater-than or equal to
+    "&&": "_and",  # And
+    "||": "_or",  # Or
+    "in": "contains",  # Containment
 }
 
 UNOP_TO_FUNC_MAP = {
-    "+": "pos",
-    "-": "neg",
+    "+": "pos",  # Positive
+    "-": "neg",  # Negative
 }
 
 

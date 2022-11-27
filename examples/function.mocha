@@ -1,4 +1,4 @@
-# The 'say_hello' after the 'fn' keyword is unnecessary, but a best practice.
+# NOTE: The 'say_hello' after the 'fn' keyword is unnecessary, but a best practice.
 say_hello = fn say_hello (name) -> (
     say "Hello there, {}!" % name
 );

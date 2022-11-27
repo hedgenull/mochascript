@@ -1,6 +1,6 @@
 counter = 0;
 
-# Going Up
+# Going up
 while counter <= 10 (
     say counter;
     counter += 1;
@@ -8,7 +8,7 @@ while counter <= 10 (
 
 # At the end of the loop, counter = 11
 
-# Going Down
+# Going down
 while counter >= 0 (
     say counter;
     counter -= 1;

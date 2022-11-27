@@ -1,3 +1,5 @@
-# Single-line comments!
+# Comments! Like Python! Or Ruby! Or... a lot of other languages!
+# Get user input and assign it to the variable "name"
 name = ask "What's your name? ";
+# Greet the user
 say "Hello, {}! Welcome to MochaScript!\nHave fun programming!" % name;

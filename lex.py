@@ -12,6 +12,8 @@ class Lexer(sly.Lexer):
         RPAREN,
         LBRACK,
         RBRACK,
+        LBRACE,
+        RBRACE,
         COMMA,
         ARROW,
         LINE_TERM,
@@ -52,7 +54,6 @@ class Lexer(sly.Lexer):
         TO,
         IN,
         FN,
-        OBJECT,
     }
 
     ignore_comment = r"#.*"
@@ -68,6 +69,8 @@ class Lexer(sly.Lexer):
     RPAREN = r"\)"
     LBRACK = r"\["
     RBRACK = r"\]"
+    LBRACE = r"\{"
+    RBRACE = r"\}"
 
     # Special
     COMMA = r","
@@ -122,4 +125,3 @@ class Lexer(sly.Lexer):
     IDENT["to"] = TO
     IDENT["in"] = IN
     IDENT["fn"] = FN
-    IDENT["object"] = OBJECT

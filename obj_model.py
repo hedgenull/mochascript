@@ -16,6 +16,7 @@ BINOP_TO_FUNC_MAP = {
     "&&": "_and",
     "||": "_or",
     "in": "contains",
+    ".": "getattr",
 }
 
 UNOP_TO_FUNC_MAP = {
@@ -70,14 +71,10 @@ class BaseObject:
         return -self.value
 
     def _and(self, other):
-        return Boolean(
-            Boolean(self.visit().value).value and Boolean(other.visit().value).value
-        )
+        return Boolean(Boolean(self.visit().value).value and Boolean(other.visit().value).value)
 
     def _or(self, other):
-        return Boolean(
-            Boolean(self.visit().value).value or Boolean(other.visit().value).value
-        )
+        return Boolean(Boolean(self.visit().value).value or Boolean(other.visit().value).value)
 
     def visit(self):
         return self
@@ -92,9 +89,7 @@ class BaseObject:
         return self.__class__.__name__
 
     def __repr__(self):
-        return self.__class__.__name__ + str(
-            {k: v for k, v in self.__dict__.items() if not k.startswith("__")}
-        )
+        return self.__class__.__name__ + str({k: v for k, v in self.__dict__.items() if not k.startswith("__")})
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__ and type(self) == type(other)
@@ -159,11 +154,7 @@ class Number(Atom):
         return Number(-self.value)
 
     def repr(self):
-        return (
-            (str(self.value)[:-2] if self.value % 1 == 0 else str(self.value))
-            if self.value
-            else "0"
-        )
+        return (str(self.value)[:-2] if self.value % 1 == 0 else str(self.value)) if self.value else "0"
 
     str = repr
 
@@ -222,12 +213,7 @@ class String(Array):
     """String class for MochaScript."""
 
     def __init__(self, value=""):
-        self.value = (
-            value.strip('"')
-            .replace(r"\n", "\n")
-            .replace(r"\t", "\t")
-            .replace(r"\\", "\\")
-        )
+        self.value = value.strip('"').replace(r"\n", "\n").replace(r"\t", "\t").replace(r"\\", "\\")
 
     def add(self, other):
         if isinstance(other, SpecialExpression):
@@ -301,17 +287,13 @@ class Function(Atom):
         self.value = self.repr()
 
     def repr(self):
-        return f"<function {self.name}>" if self.name else "<anonymous function object>"
+        return f"<function {self.name}>" if self.name else "<anonymous function>"
 
     def call(self, arguments):
         """Call the function with arguments"""
         # Append the passed arguments to the environment
-        _assignments = [
-            k.visit() for k in arguments.keys() if isinstance(k, AssignmentNode)
-        ]
-        arguments = {
-            k: v for k, v in arguments.items() if not isinstance(k, AssignmentNode)
-        }
+        _assignments = [k.visit() for k in arguments.keys() if isinstance(k, AssignmentNode)]
+        arguments = {k: v for k, v in arguments.items() if not isinstance(k, AssignmentNode)}
         updated_args = {**ENV[-1], **self.closure_env, **arguments}
         ENV.append(MSEnv(**updated_args))
         # Get the result of the function
@@ -322,9 +304,7 @@ class Function(Atom):
         ENV.pop()
         return result
 
-    add = lambda self, other: abort(
-        f"Invalid types for operation: Function and {type(other).__name__}"
-    )
+    add = lambda self, other: abort(f"Invalid types for operation: Function and {type(other).__name__}")
     sub = add
     mul = add
     div = add
@@ -340,6 +320,23 @@ class Function(Atom):
 
     pos = lambda self: abort(f"Invalid type for operation: Function")
     neg = pos
+
+
+class Object(Atom):
+    def __init__(self, namespace=None):
+        self.namespace = namespace or {}
+        self.value = self.repr()
+
+    def getattr(self, other):
+        if self.namespace.get(other) is not None:
+            return self.namespace.get(other)
+        else:
+            abort(f"Undefined variable '{other}'")
+
+    def repr(self):
+        return f"{{{k: v.repr() for k, v in self.namespace.items()}}}"
+
+    str = repr
 
 
 class SpecialExpression(BaseObject):
@@ -381,11 +378,7 @@ class IfNode(SpecialExpression):
         self.false_block = false_block
 
     def visit(self):
-        return (
-            self.true_block.visit()
-            if self.condition.visit().value
-            else self.false_block.visit()
-        )
+        return self.true_block.visit() if self.condition.visit().value else self.false_block.visit()
 
 
 class WhileNode(SpecialExpression):
@@ -444,14 +437,7 @@ class RangeNode(SpecialExpression):
         self.end = end
 
     def visit(self):
-        return Array(
-            [
-                Number(n)
-                for n in range(
-                    int(self.start.visit().value), int(self.end.visit().value + 1)
-                )
-            ]
-        )
+        return Array([Number(n) for n in range(int(self.start.visit().value), int(self.end.visit().value + 1))])
 
 
 class SayNode(SpecialExpression):
@@ -507,10 +493,7 @@ class CallFunctionNode(SpecialExpression):
         self.function = self.function.visit()
         if hasattr(self.function, "call"):
             self.arguments = {
-                key: val.visit()
-                for key, val in dict(
-                    zip(self.function.parameters, self.arguments)
-                ).items()
+                key: val.visit() for key, val in dict(zip(self.function.parameters, self.arguments)).items()
             }
             result = self.function.call(self.arguments)
         else:
@@ -539,9 +522,7 @@ class InPlaceAssignmentNode(SpecialExpression):
         self.value = value
 
     def visit(self):
-        return AssignmentNode(
-            self.name, BinOp(self.op, ReferenceNode(self.name), self.value)
-        ).visit()
+        return AssignmentNode(self.name, BinOp(self.op, ReferenceNode(self.name), self.value)).visit()
 
 
 class ReferenceNode(SpecialExpression):
@@ -553,7 +534,7 @@ class ReferenceNode(SpecialExpression):
     def visit(self):
         value = ENV[-1].get(self.name)
         if not value:
-            abort(f"Undefined variable {self.name}")
+            abort(f"Undefined variable '{self.name}'")
         return value
 
 

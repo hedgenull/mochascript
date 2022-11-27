@@ -265,6 +265,11 @@ class Parser(sly.Parser):
         """String"""
         return String(p.STRING)
 
+    @_("expr DOT IDENT")
+    def atom(self, p):
+        """Getattr expression"""
+        return BinOp(".", p.expr, p.IDENT)
+
     @_("IDENT")
     def atom(self, p):
         """Variable or constant reference"""
@@ -331,12 +336,12 @@ class Parser(sly.Parser):
         """Function definition"""
         return Function(p.program, [], name=p.IDENT)
 
-    @_("OBJECT LBRACK key_val_pairs RBRACK")
+    @_("LBRACE key_val_pairs RBRACE")
     def atom(self, p):
         """Object"""
         return Object(p.key_val_pairs)
 
-    @_("OBJECT LBRACK RBRACK")
+    @_("LBRACE RBRACE")
     def atom(self, p):
         """Empty object"""
         return Object()

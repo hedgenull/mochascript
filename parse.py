@@ -331,12 +331,24 @@ class Parser(sly.Parser):
         """Function definition"""
         return Function(p.program, [], name=p.IDENT)
 
+    @_("OBJECT LBRACK key_val_pairs RBRACK")
+    def atom(self, p):
+        """Object"""
+        return Object(p.key_val_pairs)
+
+    @_("OBJECT LBRACK RBRACK")
+    def atom(self, p):
+        """Empty object"""
+        return Object()
+
     @_("FALSE")
     def atom(self, p):
+        """False"""
         return Boolean(False)
 
     @_("TRUE")
     def atom(self, p):
+        """True"""
         return Boolean(True)
 
     @_("IDENT COMMA func_params")
@@ -389,3 +401,15 @@ class Parser(sly.Parser):
     def comma_sep(self, p):
         """Comma-separated list"""
         return p.expr
+
+    @_("key_val_pair COMMA key_val_pairs")
+    def key_val_pairs(self, p):
+        return {**p.key_val_pair, **p.key_val_pairs}
+
+    @_("key_val_pair", "key_val_pair COMMA")
+    def key_val_pairs(self, p):
+        return p.key_val_pair
+
+    @_("IDENT COLON expr")
+    def key_val_pair(self, p):
+        return {p.IDENT: p.expr}

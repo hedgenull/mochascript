@@ -15,6 +15,8 @@ class Lexer(sly.Lexer):
         COMMA,
         ARROW,
         LINE_TERM,
+        COLON,
+        DOT,
         PLUSEQ,
         MINUSEQ,
         MULEQ,
@@ -50,6 +52,7 @@ class Lexer(sly.Lexer):
         TO,
         IN,
         FN,
+        OBJECT,
     }
 
     ignore_comment = r"#.*"
@@ -70,6 +73,8 @@ class Lexer(sly.Lexer):
     COMMA = r","
     ARROW = r"->"
     LINE_TERM = ";"
+    COLON = r"\:"
+    DOT = r"\."
 
     # Operator-assignments
     MODEQ = r"%="
@@ -117,3 +122,4 @@ class Lexer(sly.Lexer):
     IDENT["to"] = TO
     IDENT["in"] = IN
     IDENT["fn"] = FN
+    IDENT["object"] = OBJECT

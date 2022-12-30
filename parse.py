@@ -415,6 +415,6 @@ class Parser(sly.Parser):
     def key_val_pairs(self, p):
         return p.key_val_pair
 
-    @_("IDENT COLON expr")
+    @_("STRING COLON expr")
     def key_val_pair(self, p):
-        return {p.IDENT: p.expr}
+        return {p.STRING: p.expr}

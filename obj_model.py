@@ -334,7 +334,7 @@ class Object(Atom):
             abort(f"Undefined variable '{other}'")
 
     def repr(self):
-        return f"{{{k: v.repr() for k, v in self.namespace.items()}}}"
+        return str({k.repr(): v.repr() for k, v in self.namespace.items()})
 
     str = repr
 
